@@ -6,6 +6,7 @@ namespace COMP_3951_BlockForge_TechPro
         private const int GridCellHeight = 40;
 
         private readonly GridSnapService _gridSnapService;
+        private readonly Dictionary<Panel, CodeBlock> _workspaceBlocks = new();
 
         public Form1()
         {
@@ -136,12 +137,12 @@ namespace COMP_3951_BlockForge_TechPro
             // groupBox has a border/title; keep it inside a bit
             dropPoint.Offset(-newBlock.Width / 2, -newBlock.Height / 2);
 
-            // Clamp inside workspace bounds so it doesn't go out of view
-            dropPoint = ClampToBounds(dropPoint, newBlock.Size, groupBoxWorkSpace.ClientSize);
-
-            newBlock.Location = dropPoint;
+            SnappedPlacement snappedPlacement = _gridSnapService.Snap(dropPoint, newBlock.Size, WorkspaceBounds);
+            newBlock.Location = snappedPlacement.Location;
             groupBoxWorkSpace.Controls.Add(newBlock);
             newBlock.BringToFront();
+
+            RegisterWorkspaceBlock(newBlock, snappedPlacement);
         }
 
         // Clone template into a draggable workspace block 
@@ -217,8 +218,40 @@ namespace COMP_3951_BlockForge_TechPro
 
         private void WorkspaceBlock_MouseUp(object sender, MouseEventArgs e)
         {
+            if (_activeBlock != null)
+            {
+                SnappedPlacement snappedPlacement = _gridSnapService.Snap(_activeBlock.Location, _activeBlock.Size, WorkspaceBounds);
+                _activeBlock.Location = snappedPlacement.Location;
+                UpdateStoredBlockPosition(_activeBlock, snappedPlacement);
+            }
+
             _dragging = false;
             _activeBlock = null;
+        }
+
+        private void RegisterWorkspaceBlock(Panel blockPanel, SnappedPlacement snappedPlacement)
+        {
+            string blockName = blockPanel.Tag?.ToString() ?? "Block";
+            string uid = $"{blockName}-{Guid.NewGuid():N}";
+            var codeBlock = new CodeBlock(
+                snappedPlacement.Location.X,
+                snappedPlacement.Location.Y,
+                uid,
+                snappedPlacement.GridPosition.Column,
+                snappedPlacement.GridPosition.Row);
+
+            _workspaceBlocks[blockPanel] = codeBlock;
+        }
+
+        private void UpdateStoredBlockPosition(Panel blockPanel, SnappedPlacement snappedPlacement)
+        {
+            if (!_workspaceBlocks.TryGetValue(blockPanel, out CodeBlock? codeBlock))
+            {
+                return;
+            }
+
+            codeBlock.UpdatePosition(snappedPlacement.Location.X, snappedPlacement.Location.Y);
+            codeBlock.UpdateGridPosition(snappedPlacement.GridPosition.Column, snappedPlacement.GridPosition.Row);
         }
 
         // keep blocks inside workspace bounds
