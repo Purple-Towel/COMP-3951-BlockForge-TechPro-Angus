@@ -2,12 +2,24 @@ namespace COMP_3951_BlockForge_TechPro
 {
     public partial class Form1 : Form
     {
+        private const int GridCellWidth = 40;
+        private const int GridCellHeight = 40;
+
+        private readonly GridSnapService _gridSnapService;
+
         public Form1()
         {
             InitializeComponent();
+            _gridSnapService = new GridSnapService(GridCellWidth, GridCellHeight);
             SetupDragDrop();
             CreateBlockTemplates();
         }
+
+        /// <summary>
+        /// Uses the current workspace client size so future snap calls always respect the live workspace area.
+        /// </summary>
+        private Size WorkspaceBounds => groupBoxWorkSpace.ClientSize;
+
         // --- Drag/Drop wiring for the workspace ---
         private void SetupDragDrop()
         {
