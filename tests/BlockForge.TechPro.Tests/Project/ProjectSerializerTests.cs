@@ -1,6 +1,6 @@
 using COMP_3951_BlockForge_TechPro;
 
-namespace BlockForge.TechPro.Tests;
+namespace BlockForge.TechPro.ProjectTests;
 
 [TestClass]
 public class ProjectSerializerTests
