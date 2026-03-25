@@ -48,19 +48,25 @@ namespace COMP_3951_BlockForge_TechPro
             var block1 = MakeTemplateBlock("If", Color.Aqua);
             var block2 = MakeTemplateBlock("While", Color.PeachPuff);
             var block3 = MakeTemplateBlock("Run", Color.Green);
+            var block4 = MakeTemplateBlock("Print", Color.Khaki);
+            var block5 = MakeTemplateBlock("==", Color.Plum);
 
             // Size 
-            block1.Size = block2.Size = block3.Size = new Size(70, 60);
+            block1.Size = block2.Size = block3.Size = block4.Size = block5.Size = new Size(70, 60);
 
             // Small gap between blocks (FlowLayoutPanel uses each control's Margin)
             block1.Margin = new Padding(0, 0, 8, 0);
             block2.Margin = new Padding(0, 0, 8, 0);
             block3.Margin = new Padding(0, 0, 8, 0);
+            block4.Margin = new Padding(0, 0, 8, 0);
+            block5.Margin = new Padding(0, 0, 8, 0);
 
             // Add to the row
             topRow.Controls.Add(block1);
             topRow.Controls.Add(block2);
             topRow.Controls.Add(block3);
+            topRow.Controls.Add(block4);
+            topRow.Controls.Add(block5);
 
             // Add the row to BlockBin
             groupBoxBlockBin.Controls.Add(topRow);
