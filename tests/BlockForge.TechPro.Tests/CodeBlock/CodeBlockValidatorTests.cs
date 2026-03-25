@@ -7,7 +7,7 @@ using COMP_3951_BlockForge_TechPro;
 /// Date: Mar 4 2026
 /// Source: Self-written, with AI coaching. All code submitted is human written, based on ChatGPT guidance.
 /// </summary>
-namespace CodeBlockTests;
+namespace BlockForge.TechPro.CodeBlockTests;
 [TestClass]
 public sealed class CodeBlockValidatorTests
 {
