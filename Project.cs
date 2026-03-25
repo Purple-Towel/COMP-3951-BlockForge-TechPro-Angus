@@ -10,10 +10,10 @@ namespace COMP_3951_BlockForge_TechPro
         public string? ProjectName { get; set; }
         public List<CodeBlock> CodeBlocks { get; set; } = new List<CodeBlock>();
 
-        public Project(string name, List<CodeBlock> blocks)
+        public Project(string projectName, List<CodeBlock> codeBlocks)
         {
-            this.ProjectName = name;
-            this.CodeBlocks = blocks;
+            this.ProjectName = projectName;
+            this.CodeBlocks = codeBlocks;
         }
 
         public void UpdateBlocks(List<CodeBlock> blocks)
