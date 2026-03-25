@@ -79,6 +79,7 @@
             flowLayoutPanel1.Controls.Add(Block1);
             flowLayoutPanel1.Controls.Add(panel1);
             flowLayoutPanel1.Controls.Add(panel2);
+            flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(12, 26);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Padding = new Padding(10, 0, 0, 0);
@@ -329,6 +330,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             groupBox1.Location = new Point(0, 31);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(140, 279);
@@ -339,6 +341,7 @@
             // 
             // groupBox2
             // 
+            groupBox2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             groupBox2.Controls.Add(groupBox3);
             groupBox2.Location = new Point(3, 302);
             groupBox2.Name = "groupBox2";
@@ -358,6 +361,7 @@
             // 
             // groupBoxBlockBin
             // 
+            groupBoxBlockBin.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBoxBlockBin.Controls.Add(flowLayoutPanel1);
             groupBoxBlockBin.Location = new Point(194, 302);
             groupBoxBlockBin.Name = "groupBoxBlockBin";
@@ -368,6 +372,7 @@
             // 
             // groupBoxWorkSpace
             // 
+            groupBoxWorkSpace.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBoxWorkSpace.Location = new Point(146, 31);
             groupBoxWorkSpace.Name = "groupBoxWorkSpace";
             groupBoxWorkSpace.Size = new Size(648, 276);
@@ -387,6 +392,7 @@
             Controls.Add(groupBox1);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
+            MinimumSize = new Size(816, 497);
             Name = "Form1";
             Text = "BlockForge";
             Load += Form1_Load;
