@@ -8,7 +8,7 @@ namespace COMP_3951_BlockForge_TechPro
     {
         public int Version { get; set; } = 1;
         public string? ProjectName { get; set; }
-        public List<CodeBlock>? CodeBlocks { get; set; } = new List<CodeBlock>();
+        public List<CodeBlock> CodeBlocks { get; set; } = new List<CodeBlock>();
 
         public Project(string name, List<CodeBlock> blocks)
         {
