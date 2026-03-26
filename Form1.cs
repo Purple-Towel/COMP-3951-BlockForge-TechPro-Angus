@@ -425,6 +425,13 @@ namespace COMP_3951_BlockForge_TechPro
             dropPoint.Offset(-newBlock.Width / 2, -newBlock.Height / 2);
 
             SnappedPlacement snappedPlacement = _gridSnapService.Snap(dropPoint, newBlock.Size, WorkspaceBounds);
+
+            if (IsGridCellOccupied(snappedPlacement.GridPosition))
+            {
+                AppendConsoleMessage(ConsoleMessageSeverity.Warning, "That grid cell is already occupied.");
+                return;
+            }
+
             newBlock.Location = snappedPlacement.Location;
             groupBoxWorkSpace.Controls.Add(newBlock);
             newBlock.BringToFront();
@@ -480,7 +487,7 @@ namespace COMP_3951_BlockForge_TechPro
         // Drag blocks around inside WorkSpace 
         private bool _dragging = false;
         private Point _dragOffset; // mouse offset within the panel being dragged
-        private Panel _activeBlock;
+        private Panel? _activeBlock;
         private Color _activeBlockOriginalColor;
 
         private void WorkspaceBlock_MouseDown(object sender, MouseEventArgs e)
@@ -518,9 +525,6 @@ namespace COMP_3951_BlockForge_TechPro
         {
             if (_activeBlock != null)
             {
-                SnappedPlacement snappedPlacement = _gridSnapService.Snap(_activeBlock.Location, _activeBlock.Size, WorkspaceBounds);
-                _activeBlock.Location = snappedPlacement.Location;
-
                 if (TryDeleteBlockOnDrop(_activeBlock))
                 {
                     _dragging = false;
@@ -528,8 +532,20 @@ namespace COMP_3951_BlockForge_TechPro
                     return;
                 }
 
+                SnappedPlacement snappedPlacement = _gridSnapService.Snap(_activeBlock.Location, _activeBlock.Size, WorkspaceBounds);
+
+                if (IsGridCellOccupied(snappedPlacement.GridPosition, _activeBlock))
+                {
+                    AppendConsoleMessage(ConsoleMessageSeverity.Warning, "That grid cell is already occupied.");
+                    RestoreStoredBlockPosition(_activeBlock);
+                }
+                else
+                {
+                    _activeBlock.Location = snappedPlacement.Location;
+                    UpdateStoredBlockPosition(_activeBlock, snappedPlacement);
+                }
+
                 _activeBlock.BackColor = _activeBlockOriginalColor;
-                UpdateStoredBlockPosition(_activeBlock, snappedPlacement);
             }
 
             _dragging = false;
@@ -559,6 +575,7 @@ namespace COMP_3951_BlockForge_TechPro
                 variableType);
 
             _workspaceBlocks[blockPanel] = codeBlock;
+            AppendConsoleMessage(ConsoleMessageSeverity.Message, $"{blockName} block created.");
         }
 
         private bool TryDeleteBlockOnDrop(Panel blockPanel)
@@ -697,6 +714,35 @@ namespace COMP_3951_BlockForge_TechPro
 
             codeBlock.UpdatePosition(snappedPlacement.Location.X, snappedPlacement.Location.Y);
             codeBlock.UpdateGridPosition(snappedPlacement.GridPosition.Column, snappedPlacement.GridPosition.Row);
+        }
+
+        private void RestoreStoredBlockPosition(Panel blockPanel)
+        {
+            if (!_workspaceBlocks.TryGetValue(blockPanel, out CodeBlock? codeBlock))
+            {
+                return;
+            }
+
+            blockPanel.Location = new Point((int)codeBlock.PosX, (int)codeBlock.PosY);
+        }
+
+        private bool IsGridCellOccupied(GridPosition gridPosition, Panel? movingBlock = null)
+        {
+            foreach (KeyValuePair<Panel, CodeBlock> workspaceBlock in _workspaceBlocks)
+            {
+                if (workspaceBlock.Key == movingBlock)
+                {
+                    continue;
+                }
+
+                if (workspaceBlock.Value.GridColumn == gridPosition.Column &&
+                    workspaceBlock.Value.GridRow == gridPosition.Row)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // keep blocks inside workspace bounds
