@@ -7,12 +7,16 @@ namespace COMP_3951_BlockForge_TechPro
 
         private readonly GridSnapService _gridSnapService;
         private readonly Dictionary<Panel, CodeBlock> _workspaceBlocks = new();
+        private readonly WorkspaceConsole _workspaceConsole = new();
+
+        private ListBox? _consoleListBox;
 
         public Form1()
         {
             InitializeComponent();
             _gridSnapService = new GridSnapService(GridCellWidth, GridCellHeight);
             SetupDragDrop();
+            SetupConsoleWindow();
             CreateBlockTemplates();
         }
 
@@ -28,6 +32,46 @@ namespace COMP_3951_BlockForge_TechPro
             groupBoxWorkSpace.AllowDrop = true;
             groupBoxWorkSpace.DragEnter += WorkSpace_DragEnter;
             groupBoxWorkSpace.DragDrop += WorkSpace_DragDrop;
+        }
+
+        private void SetupConsoleWindow()
+        {
+            groupBox3.Visible = false;
+
+            _consoleListBox = new ListBox
+            {
+                Dock = DockStyle.Fill,
+                BorderStyle = BorderStyle.None,
+                BackColor = Color.WhiteSmoke,
+                Font = new Font("Consolas", 9F, FontStyle.Regular),
+                HorizontalScrollbar = true
+            };
+
+            groupBox2.Controls.Add(_consoleListBox);
+            _consoleListBox.BringToFront();
+
+            RefreshConsoleDisplay();
+        }
+
+        private void RefreshConsoleDisplay()
+        {
+            if (_consoleListBox == null)
+            {
+                return;
+            }
+
+            _consoleListBox.Items.Clear();
+
+            foreach (ConsoleMessage message in _workspaceConsole.Messages)
+            {
+                _consoleListBox.Items.Add($"[{message.Severity}] {message.Text}");
+            }
+        }
+
+        private void AppendConsoleMessage(ConsoleMessageSeverity severity, string text)
+        {
+            _workspaceConsole.Append(new ConsoleMessage(severity, text));
+            RefreshConsoleDisplay();
         }
 
         // Testing Templates
@@ -284,7 +328,7 @@ namespace COMP_3951_BlockForge_TechPro
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            AppendConsoleMessage(ConsoleMessageSeverity.Message, "Console ready.");
         }
 
         private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
