@@ -40,6 +40,7 @@ namespace COMP_3951_BlockForge_TechPro
         /// Gets or sets the unique identifier for the block.
         /// </summary>
         public string Uid { get; set; }
+
         public CodeBlockType BlockType { get; set; }
         public string? BlockName { get; set; }
         public VariableBlockType? VariableType { get; set; }

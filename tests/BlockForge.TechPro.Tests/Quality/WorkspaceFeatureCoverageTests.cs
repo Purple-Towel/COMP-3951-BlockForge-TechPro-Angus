@@ -7,6 +7,13 @@ namespace BlockForge.TechPro.Tests.Quality;
 
 [TestClass]
 [DoNotParallelize]
+/// <summary>
+/// Verifies recently added workspace, metadata, UI helper, and Java mapping behaviors.
+/// </summary>
+/// <remarks>
+/// Author: Asher Drybrough
+/// Student Number: A01412779
+/// </remarks>
 public sealed class WorkspaceFeatureCoverageTests
 {
     [TestMethod]

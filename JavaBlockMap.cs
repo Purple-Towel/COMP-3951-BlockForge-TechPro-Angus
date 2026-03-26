@@ -7,6 +7,14 @@ namespace COMP_3951_BlockForge_TechPro
     /// </summary>
     public static class JavaBlockMap
     {
+        /// <summary>
+        /// Converts a <see cref="CodeBlock"/> into its Java code fragment.
+        /// </summary>
+        /// <param name="block">The block to translate.</param>
+        /// <returns>The Java code fragment associated with the supplied block.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the block type or variable metadata is not supported for Java generation.
+        /// </exception>
         public static string ToJava(CodeBlock block)
         {
             return block.BlockType switch

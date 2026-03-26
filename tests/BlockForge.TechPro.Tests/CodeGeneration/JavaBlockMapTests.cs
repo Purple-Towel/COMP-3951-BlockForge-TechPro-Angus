@@ -3,6 +3,13 @@ using COMP_3951_BlockForge_TechPro;
 namespace BlockForge.TechPro.Tests.CodeGeneration;
 
 [TestClass]
+/// <summary>
+/// Verifies Java syntax mapping for supported workspace block types.
+/// </summary>
+/// <remarks>
+/// Updated by: Asher Drybrough
+/// Student Number: A01412779
+/// </remarks>
 public sealed class JavaBlockMapTests
 {
     [TestMethod]

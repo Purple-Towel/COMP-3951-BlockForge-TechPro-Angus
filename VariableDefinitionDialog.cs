@@ -1,5 +1,12 @@
 namespace COMP_3951_BlockForge_TechPro
 {
+    /// <summary>
+    /// Provides a dialog for creating typed variable blocks from the Block Bin toolbar.
+    /// </summary>
+    /// <remarks>
+    /// Updated by: Asher Drybrough
+    /// Student Number: A01412779
+    /// </remarks>
     public sealed class VariableDefinitionDialog : Form
     {
         private readonly TextBox _nameTextBox;

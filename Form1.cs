@@ -1,15 +1,15 @@
 namespace COMP_3951_BlockForge_TechPro
 {
+    /// <summary>
+    /// Represents the main BlockForge editor window and all related workspace behaviors.
+    /// </summary>
+    /// <remarks>
+    /// Author: Asher Drybrough
+    /// Student Number: A01412779
+    /// </remarks>
     public partial class Form1 : Form
     {
-        /// <summary>
-        /// Defines the width of one workspace grid cell in pixels.
-        /// </summary>
         private const int GridCellWidth = 40;
-
-        /// <summary>
-        /// Defines the height of one workspace grid cell in pixels.
-        /// </summary>
         private const int GridCellHeight = 40;
         private const int TopPanelMinSize = 80;
         private const int BottomPanelMinSize = 120;
@@ -17,25 +17,9 @@ namespace COMP_3951_BlockForge_TechPro
         private const int RightPanelMinSize = 240;
         private const int DeleteZoneSize = 28;
         private const int DeleteZoneMargin = 8;
-
-        /// <summary>
-        /// Calculates snapped block positions for the workspace grid.
-        /// </summary>
         private readonly GridSnapService _gridSnapService;
-
-        /// <summary>
-        /// Stores the backing <see cref="CodeBlock"/> for each workspace panel.
-        /// </summary>
         private readonly Dictionary<Panel, CodeBlock> _workspaceBlocks = new();
-
-        /// <summary>
-        /// Stores the console messages shown in the workspace console window.
-        /// </summary>
         private readonly WorkspaceConsole _workspaceConsole = new();
-
-        /// <summary>
-        /// Displays console messages in the form UI.
-        /// </summary>
         private ListBox? _consoleListBox;
         private FlowLayoutPanel? _blockBinRow;
         private ToolStrip? _variableToolStrip;
@@ -44,7 +28,6 @@ namespace COMP_3951_BlockForge_TechPro
         private SplitContainer? _bottomVerticalSplit;
         private PictureBox? _deleteDropZone;
         private bool _syncingVerticalSplit;
-
         public Form1()
         {
             InitializeComponent();
@@ -57,11 +40,11 @@ namespace COMP_3951_BlockForge_TechPro
             CreateBlockTemplates();
         }
 
-        /// <summary>
-        /// Gets the current workspace client size so snap calculations always use the visible workspace bounds.
-        /// </summary>
         private Size WorkspaceBounds => groupBoxWorkSpace.ClientSize;
 
+        /// <summary>
+        /// Builds the resizable split-container layout used by the main application window.
+        /// </summary>
         private void SetupResizableLayout()
         {
             _horizontalSplit = new SplitContainer
@@ -138,6 +121,13 @@ namespace COMP_3951_BlockForge_TechPro
             }
         }
 
+        /// <summary>
+        /// Applies minimum pane sizes and clamps the requested splitter distance to a valid range.
+        /// </summary>
+        /// <param name="splitContainer">The split-container being configured.</param>
+        /// <param name="panel1Min">The minimum size of panel 1.</param>
+        /// <param name="panel2Min">The minimum size of panel 2.</param>
+        /// <param name="desiredDistance">The preferred splitter distance.</param>
         private static void ApplySplitLayout(SplitContainer splitContainer, int panel1Min, int panel2Min, int desiredDistance)
         {
             int span = splitContainer.Orientation == Orientation.Vertical
@@ -225,6 +215,9 @@ namespace COMP_3951_BlockForge_TechPro
             groupBoxWorkSpace.DragDrop += WorkSpace_DragDrop;
         }
 
+        /// <summary>
+        /// Creates the workspace delete target used to remove blocks by dragging them over the trash icon.
+        /// </summary>
         private void SetupDeleteDropZone()
         {
             _deleteDropZone = new PictureBox
@@ -289,9 +282,6 @@ namespace COMP_3951_BlockForge_TechPro
             return new Region(path);
         }
 
-        /// <summary>
-        /// Creates the console window UI and binds it to the in-memory workspace console.
-        /// </summary>
         private void SetupConsoleWindow()
         {
             groupBox3.Visible = false;
@@ -311,9 +301,6 @@ namespace COMP_3951_BlockForge_TechPro
             RefreshConsoleDisplay();
         }
 
-        /// <summary>
-        /// Refreshes the visible console list so it matches the stored console messages.
-        /// </summary>
         private void RefreshConsoleDisplay()
         {
             if (_consoleListBox == null)
@@ -329,11 +316,6 @@ namespace COMP_3951_BlockForge_TechPro
             }
         }
 
-        /// <summary>
-        /// Appends a message to the workspace console and refreshes the visible console window.
-        /// </summary>
-        /// <param name="severity">The severity level of the message.</param>
-        /// <param name="text">The text displayed in the console window.</param>
         private void AppendConsoleMessage(ConsoleMessageSeverity severity, string text)
         {
             _workspaceConsole.Append(new ConsoleMessage(severity, text));
@@ -341,6 +323,9 @@ namespace COMP_3951_BlockForge_TechPro
         }
 
         // Testing Templates
+        /// <summary>
+        /// Builds the default block templates shown in the toolbox.
+        /// </summary>
         private void CreateBlockTemplates()
         {
             // A container that sits at the TOP of BlockBin and auto-lays out blocks left-to-right
@@ -440,6 +425,11 @@ namespace COMP_3951_BlockForge_TechPro
         }
 
         // Workspace DragDrop -> clone template into workspace 
+        /// <summary>
+        /// Creates and places a new workspace block from a dropped toolbox template.
+        /// </summary>
+        /// <param name="sender">The workspace control receiving the drop.</param>
+        /// <param name="e">The drag event arguments.</param>
         private void WorkSpace_DragDrop(object sender, DragEventArgs e)
         {
             if (e.Data == null) return;
@@ -474,6 +464,11 @@ namespace COMP_3951_BlockForge_TechPro
         }
 
         // Clone template into a draggable workspace block 
+        /// <summary>
+        /// Clones a toolbox template into a movable workspace block.
+        /// </summary>
+        /// <param name="template">The source template panel.</param>
+        /// <returns>A workspace-ready block panel.</returns>
         private Panel CloneAsWorkspaceBlock(Panel template)
         {
             // Pull text/type from Tag, and color from BackColor
@@ -518,10 +513,9 @@ namespace COMP_3951_BlockForge_TechPro
 
         // Drag blocks around inside WorkSpace 
         private bool _dragging = false;
-        private Point _dragOffset; // mouse offset within the panel being dragged
+        private Point _dragOffset;
         private Panel? _activeBlock;
         private Color _activeBlockOriginalColor;
-
         private void WorkspaceBlock_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left) return;
@@ -532,7 +526,7 @@ namespace COMP_3951_BlockForge_TechPro
             _activeBlockOriginalColor = _activeBlock.BackColor;
             _activeBlock.BackColor = GetDragVisualColor(_activeBlockOriginalColor);
             _dragging = true;
-            _dragOffset = e.Location; // where in the panel the mouse grabbed it
+            _dragOffset = e.Location;
             _activeBlock.BringToFront();
             _deleteDropZone?.BringToFront();
         }
@@ -541,10 +535,8 @@ namespace COMP_3951_BlockForge_TechPro
         {
             if (!_dragging || _activeBlock == null) return;
 
-            // Mouse position relative to workspace
             Point mouseInWorkspace = groupBoxWorkSpace.PointToClient(MousePosition);
 
-            // New top-left = mouse minus grab offset
             Point newLoc = new Point(mouseInWorkspace.X - _dragOffset.X,
                                      mouseInWorkspace.Y - _dragOffset.Y);
 
@@ -553,6 +545,11 @@ namespace COMP_3951_BlockForge_TechPro
             _deleteDropZone?.BringToFront();
         }
 
+        /// <summary>
+        /// Finalizes a block drag, handling delete-on-drop, snap-to-grid, and occupancy rules.
+        /// </summary>
+        /// <param name="sender">The workspace block completing the drag.</param>
+        /// <param name="e">The mouse event arguments.</param>
         private void WorkspaceBlock_MouseUp(object sender, MouseEventArgs e)
         {
             if (_activeBlock != null)
@@ -592,11 +589,6 @@ namespace COMP_3951_BlockForge_TechPro
             return Color.FromArgb(r, g, b);
         }
 
-        /// <summary>
-        /// Creates and stores the backing <see cref="CodeBlock"/> for a newly dropped workspace block.
-        /// </summary>
-        /// <param name="blockPanel">The workspace panel representing the block.</param>
-        /// <param name="snappedPlacement">The snapped placement assigned to the block.</param>
         private void RegisterWorkspaceBlock(Panel blockPanel, SnappedPlacement snappedPlacement)
         {
             (CodeBlockType blockType, string blockName, VariableBlockType? variableType) = ResolveBlockMetadata(blockPanel.Tag);
@@ -615,6 +607,11 @@ namespace COMP_3951_BlockForge_TechPro
             AppendConsoleMessage(ConsoleMessageSeverity.Message, $"{blockName} block created.");
         }
 
+        /// <summary>
+        /// Deletes a workspace block if it overlaps the trash icon.
+        /// </summary>
+        /// <param name="blockPanel">The block being evaluated for deletion.</param>
+        /// <returns><see langword="true"/> if the block was deleted; otherwise, <see langword="false"/>.</returns>
         private bool TryDeleteBlockOnDrop(Panel blockPanel)
         {
             if (_deleteDropZone == null || !blockPanel.Bounds.IntersectsWith(_deleteDropZone.Bounds))
@@ -631,6 +628,9 @@ namespace COMP_3951_BlockForge_TechPro
             return true;
         }
 
+        /// <summary>
+        /// Creates the toolbox toolbar that exposes variable block actions.
+        /// </summary>
         private void SetupVariableToolbar()
         {
             _variableToolStrip = new ToolStrip
@@ -659,6 +659,10 @@ namespace COMP_3951_BlockForge_TechPro
             AppendConsoleMessage(ConsoleMessageSeverity.Message, $"Added variable block: {dialog.Result.VariableName} ({dialog.Result.VariableType})");
         }
 
+        /// <summary>
+        /// Adds a variable block template to the toolbox row.
+        /// </summary>
+        /// <param name="variable">The variable block metadata used to build the template.</param>
         private void AddVariableTemplate(VariableBlock variable)
         {
             if (_blockBinRow == null)
@@ -701,6 +705,11 @@ namespace COMP_3951_BlockForge_TechPro
             return tagValue?.ToString() ?? "Block";
         }
 
+        /// <summary>
+        /// Resolves internal block metadata from a block tag value.
+        /// </summary>
+        /// <param name="tagValue">The tag value stored on a block.</param>
+        /// <returns>The resolved block type, block name, and optional variable type.</returns>
         private static (CodeBlockType BlockType, string BlockName, VariableBlockType? VariableType) ResolveBlockMetadata(object? tagValue)
         {
             if (tagValue is VariableBlock variableBlock)
@@ -742,11 +751,6 @@ namespace COMP_3951_BlockForge_TechPro
             AppendConsoleMessage(ConsoleMessageSeverity.Message, $"Clicked block '{blockName}' type: {typeText}");
         }
 
-        /// <summary>
-        /// Updates the stored <see cref="CodeBlock"/> position after a valid block move.
-        /// </summary>
-        /// <param name="blockPanel">The workspace panel representing the block.</param>
-        /// <param name="snappedPlacement">The snapped placement assigned to the block.</param>
         private void UpdateStoredBlockPosition(Panel blockPanel, SnappedPlacement snappedPlacement)
         {
             if (!_workspaceBlocks.TryGetValue(blockPanel, out CodeBlock? codeBlock))
@@ -758,10 +762,6 @@ namespace COMP_3951_BlockForge_TechPro
             codeBlock.UpdateGridPosition(snappedPlacement.GridPosition.Column, snappedPlacement.GridPosition.Row);
         }
 
-        /// <summary>
-        /// Restores a workspace block to its last stored valid position.
-        /// </summary>
-        /// <param name="blockPanel">The workspace panel to restore.</param>
         private void RestoreStoredBlockPosition(Panel blockPanel)
         {
             if (!_workspaceBlocks.TryGetValue(blockPanel, out CodeBlock? codeBlock))
@@ -772,12 +772,6 @@ namespace COMP_3951_BlockForge_TechPro
             blockPanel.Location = new Point((int)codeBlock.PosX, (int)codeBlock.PosY);
         }
 
-        /// <summary>
-        /// Determines whether a grid cell is already occupied by another workspace block.
-        /// </summary>
-        /// <param name="gridPosition">The grid position to check.</param>
-        /// <param name="movingBlock">The block currently being moved, if any.</param>
-        /// <returns><see langword="true"/> if the grid cell is occupied; otherwise, <see langword="false"/>.</returns>
         private bool IsGridCellOccupied(GridPosition gridPosition, Panel? movingBlock = null)
         {
             foreach (KeyValuePair<Panel, CodeBlock> workspaceBlock in _workspaceBlocks)
@@ -797,7 +791,6 @@ namespace COMP_3951_BlockForge_TechPro
             return false;
         }
 
-        // keep blocks inside workspace bounds
         private Point ClampToBounds(Point loc, Size blockSize, Size containerSize)
         {
             int x = loc.X;
