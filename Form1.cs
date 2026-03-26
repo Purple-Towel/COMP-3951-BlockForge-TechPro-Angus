@@ -8,6 +8,8 @@ namespace COMP_3951_BlockForge_TechPro
         private const int BottomPanelMinSize = 120;
         private const int LeftPanelMinSize = 120;
         private const int RightPanelMinSize = 240;
+        private const int DeleteZoneSize = 28;
+        private const int DeleteZoneMargin = 8;
 
         private readonly GridSnapService _gridSnapService;
         private readonly Dictionary<Panel, CodeBlock> _workspaceBlocks = new();
@@ -19,6 +21,7 @@ namespace COMP_3951_BlockForge_TechPro
         private SplitContainer? _horizontalSplit;
         private SplitContainer? _topVerticalSplit;
         private SplitContainer? _bottomVerticalSplit;
+        private PictureBox? _deleteDropZone;
         private bool _syncingVerticalSplit;
 
         public Form1()
@@ -27,6 +30,7 @@ namespace COMP_3951_BlockForge_TechPro
             SetupResizableLayout();
             _gridSnapService = new GridSnapService(GridCellWidth, GridCellHeight);
             SetupDragDrop();
+            SetupDeleteDropZone();
             SetupConsoleWindow();
             SetupVariableToolbar();
             CreateBlockTemplates();
@@ -200,6 +204,70 @@ namespace COMP_3951_BlockForge_TechPro
             groupBoxWorkSpace.DragDrop += WorkSpace_DragDrop;
         }
 
+        private void SetupDeleteDropZone()
+        {
+            _deleteDropZone = new PictureBox
+            {
+                Size = new Size(DeleteZoneSize, DeleteZoneSize),
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                BackColor = Color.Transparent,
+                Image = CreateDeleteZoneImage()
+            };
+            _deleteDropZone.Region = CreateDeleteZoneRegion();
+
+            PositionDeleteDropZone();
+            groupBoxWorkSpace.Controls.Add(_deleteDropZone);
+            _deleteDropZone.BringToFront();
+            groupBoxWorkSpace.Resize += (_, _) => PositionDeleteDropZone();
+        }
+
+        private void PositionDeleteDropZone()
+        {
+            if (_deleteDropZone == null)
+            {
+                return;
+            }
+
+            _deleteDropZone.Location = new Point(
+                Math.Max(DeleteZoneMargin, groupBoxWorkSpace.ClientSize.Width - _deleteDropZone.Width - DeleteZoneMargin),
+                Math.Max(DeleteZoneMargin, groupBoxWorkSpace.ClientSize.Height - _deleteDropZone.Height - DeleteZoneMargin));
+        }
+
+        private static Bitmap CreateDeleteZoneImage()
+        {
+            Bitmap bitmap = new(DeleteZoneSize, DeleteZoneSize);
+            using Graphics graphics = Graphics.FromImage(bitmap);
+            graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            graphics.Clear(Color.Transparent);
+
+            using Pen iconPen = new(Color.Black, 2.3f);
+            iconPen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+            iconPen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+
+            int cx = DeleteZoneSize / 2;
+            graphics.DrawLine(iconPen, cx - 6, 9, cx + 6, 9);
+            graphics.DrawRectangle(iconPen, cx - 5, 10, 10, 12);
+            graphics.DrawLine(iconPen, cx - 2, 13, cx - 2, 19);
+            graphics.DrawLine(iconPen, cx, 13, cx, 19);
+            graphics.DrawLine(iconPen, cx + 2, 13, cx + 2, 19);
+            return bitmap;
+        }
+
+        private static Region CreateDeleteZoneRegion()
+        {
+            System.Drawing.Drawing2D.GraphicsPath path = new();
+            int cx = DeleteZoneSize / 2;
+
+            path.AddRectangle(new Rectangle(cx - 7, 8, 14, 3));
+            path.AddRectangle(new Rectangle(cx - 6, 10, 12, 14));
+            path.AddRectangle(new Rectangle(cx - 3, 13, 2, 8));
+            path.AddRectangle(new Rectangle(cx - 1, 13, 2, 8));
+            path.AddRectangle(new Rectangle(cx + 2, 13, 2, 8));
+
+            return new Region(path);
+        }
+
         private void SetupConsoleWindow()
         {
             groupBox3.Visible = false;
@@ -362,6 +430,8 @@ namespace COMP_3951_BlockForge_TechPro
             newBlock.BringToFront();
 
             RegisterWorkspaceBlock(newBlock, snappedPlacement);
+            TryDeleteBlockOnDrop(newBlock);
+            _deleteDropZone?.BringToFront();
         }
 
         // Clone template into a draggable workspace block 
@@ -411,6 +481,7 @@ namespace COMP_3951_BlockForge_TechPro
         private bool _dragging = false;
         private Point _dragOffset; // mouse offset within the panel being dragged
         private Panel _activeBlock;
+        private Color _activeBlockOriginalColor;
 
         private void WorkspaceBlock_MouseDown(object sender, MouseEventArgs e)
         {
@@ -419,9 +490,12 @@ namespace COMP_3951_BlockForge_TechPro
             _activeBlock = sender as Panel;
             if (_activeBlock == null) return;
 
+            _activeBlockOriginalColor = _activeBlock.BackColor;
+            _activeBlock.BackColor = GetDragVisualColor(_activeBlockOriginalColor);
             _dragging = true;
             _dragOffset = e.Location; // where in the panel the mouse grabbed it
             _activeBlock.BringToFront();
+            _deleteDropZone?.BringToFront();
         }
 
         private void WorkspaceBlock_MouseMove(object sender, MouseEventArgs e)
@@ -437,6 +511,7 @@ namespace COMP_3951_BlockForge_TechPro
 
             newLoc = ClampToBounds(newLoc, _activeBlock.Size, groupBoxWorkSpace.ClientSize);
             _activeBlock.Location = newLoc;
+            _deleteDropZone?.BringToFront();
         }
 
         private void WorkspaceBlock_MouseUp(object sender, MouseEventArgs e)
@@ -445,11 +520,28 @@ namespace COMP_3951_BlockForge_TechPro
             {
                 SnappedPlacement snappedPlacement = _gridSnapService.Snap(_activeBlock.Location, _activeBlock.Size, WorkspaceBounds);
                 _activeBlock.Location = snappedPlacement.Location;
+
+                if (TryDeleteBlockOnDrop(_activeBlock))
+                {
+                    _dragging = false;
+                    _activeBlock = null;
+                    return;
+                }
+
+                _activeBlock.BackColor = _activeBlockOriginalColor;
                 UpdateStoredBlockPosition(_activeBlock, snappedPlacement);
             }
 
             _dragging = false;
             _activeBlock = null;
+        }
+
+        private static Color GetDragVisualColor(Color baseColor)
+        {
+            int r = (baseColor.R + 255) / 2;
+            int g = (baseColor.G + 255) / 2;
+            int b = (baseColor.B + 255) / 2;
+            return Color.FromArgb(r, g, b);
         }
 
         private void RegisterWorkspaceBlock(Panel blockPanel, SnappedPlacement snappedPlacement)
@@ -467,6 +559,22 @@ namespace COMP_3951_BlockForge_TechPro
                 variableType);
 
             _workspaceBlocks[blockPanel] = codeBlock;
+        }
+
+        private bool TryDeleteBlockOnDrop(Panel blockPanel)
+        {
+            if (_deleteDropZone == null || !blockPanel.Bounds.IntersectsWith(_deleteDropZone.Bounds))
+            {
+                return false;
+            }
+
+            string blockName = GetBlockDisplayText(blockPanel.Tag);
+            _workspaceBlocks.Remove(blockPanel);
+            groupBoxWorkSpace.Controls.Remove(blockPanel);
+            blockPanel.Dispose();
+            AppendConsoleMessage(ConsoleMessageSeverity.Message, $"Deleted block: {blockName}");
+            _deleteDropZone.BringToFront();
+            return true;
         }
 
         private void SetupVariableToolbar()
