@@ -16,11 +16,11 @@ namespace COMP_3951_BlockForge_TechPro
     /// </summary>
     public class CodeBlock
     {
-        public double PosX { get; private set; }
-        public double PosY { get; private set; }
-        public int GridColumn { get; private set; }
-        public int GridRow { get; private set; }
-        public string Uid { get; private set; }
+        public double PosX { get; set; }
+        public double PosY { get; set; }
+        public int GridColumn { get; set; }
+        public int GridRow { get; set; }
+        public string Uid { get; set; }
 
         /// <summary>
         /// Constructor for a CodeBlock.
