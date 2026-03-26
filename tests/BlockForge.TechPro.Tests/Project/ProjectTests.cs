@@ -1,5 +1,11 @@
 using COMP_3951_BlockForge_TechPro;
 
+/// <summary>
+/// BlockForge ProjectTests 
+/// Author: Angus Grewal
+/// Date: Mar 25 2026
+/// Source: Self-written, with AI coaching. All code submitted is human written, based on ChatGPT guidance.
+/// </summary>
 namespace BlockForge.TechPro.ProjectTests;
 
 [TestClass]
