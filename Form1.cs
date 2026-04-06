@@ -1,26 +1,50 @@
 namespace COMP_3951_BlockForge_TechPro
 {
-    /// <summary>
-    /// Represents the main BlockForge editor window and all related workspace behaviors.
-    /// </summary>
-    /// <remarks>
-    /// Author: Asher Drybrough
-    /// Student Number: A01412779
-    /// </remarks>
     public partial class Form1 : Form
     {
-        private const int GridCellWidth = 40;
-        private const int GridCellHeight = 40;
+        /// <summary>
+        /// Defines the width of one workspace grid cell in pixels.
+        /// </summary>
+        private const int StandardBlockWidth = 140;
+        private const int StandardBlockHeight = 45;
+        private const int ConnectorVisualHeight = 12;
+        private const int ConnectorVerticalGap = 15;
+        private const int GridCellWidth = StandardBlockWidth;
+
+        /// <summary>
+        /// Defines the height of one workspace grid cell in pixels.
+        /// </summary>
+        private const int GridCellHeight = StandardBlockHeight + ConnectorVisualHeight + ConnectorVerticalGap;
         private const int TopPanelMinSize = 80;
         private const int BottomPanelMinSize = 120;
         private const int LeftPanelMinSize = 120;
         private const int RightPanelMinSize = 240;
         private const int DeleteZoneSize = 28;
         private const int DeleteZoneMargin = 8;
+
+        /// <summary>
+        /// Calculates snapped block positions for the workspace grid.
+        /// </summary>
         private readonly GridSnapService _gridSnapService;
+
+        /// <summary>
+        /// Stores the backing <see cref="CodeBlock"/> for each workspace panel.
+        /// </summary>
         private readonly Dictionary<Panel, CodeBlock> _workspaceBlocks = new();
+        private readonly Dictionary<Panel, BlockConnectorControl> _connectorControlsByChild = new();
+
+        /// <summary>
+        /// Stores the console messages shown in the workspace console window.
+        /// </summary>
         private readonly WorkspaceConsole _workspaceConsole = new();
+
+        /// <summary>
+        /// Displays console messages in the form UI.
+        /// </summary>
         private ListBox? _consoleListBox;
+        private readonly BlockConnectorService _blockConnectorService;
+        private readonly ProjectFileManager _projectFileManager;
+        private readonly WorkspaceSaveNotifier _workspaceSaveNotifier;
         private FlowLayoutPanel? _blockBinRow;
         private ToolStrip? _variableToolStrip;
         private SplitContainer? _horizontalSplit;
@@ -28,11 +52,15 @@ namespace COMP_3951_BlockForge_TechPro
         private SplitContainer? _bottomVerticalSplit;
         private PictureBox? _deleteDropZone;
         private bool _syncingVerticalSplit;
+
         public Form1()
         {
             InitializeComponent();
             SetupResizableLayout();
             _gridSnapService = new GridSnapService(GridCellWidth, GridCellHeight);
+            _blockConnectorService = new BlockConnectorService(GridCellWidth, GridCellHeight);
+            _projectFileManager = new ProjectFileManager(new PayloadTransformer(5));
+            _workspaceSaveNotifier = new WorkspaceSaveNotifier(_workspaceConsole);
             SetupDragDrop();
             SetupDeleteDropZone();
             SetupConsoleWindow();
@@ -40,11 +68,11 @@ namespace COMP_3951_BlockForge_TechPro
             CreateBlockTemplates();
         }
 
+        /// <summary>
+        /// Gets the current workspace client size so snap calculations always use the visible workspace bounds.
+        /// </summary>
         private Size WorkspaceBounds => groupBoxWorkSpace.ClientSize;
 
-        /// <summary>
-        /// Builds the resizable split-container layout used by the main application window.
-        /// </summary>
         private void SetupResizableLayout()
         {
             _horizontalSplit = new SplitContainer
@@ -121,13 +149,6 @@ namespace COMP_3951_BlockForge_TechPro
             }
         }
 
-        /// <summary>
-        /// Applies minimum pane sizes and clamps the requested splitter distance to a valid range.
-        /// </summary>
-        /// <param name="splitContainer">The split-container being configured.</param>
-        /// <param name="panel1Min">The minimum size of panel 1.</param>
-        /// <param name="panel2Min">The minimum size of panel 2.</param>
-        /// <param name="desiredDistance">The preferred splitter distance.</param>
         private static void ApplySplitLayout(SplitContainer splitContainer, int panel1Min, int panel2Min, int desiredDistance)
         {
             int span = splitContainer.Orientation == Orientation.Vertical
@@ -215,9 +236,6 @@ namespace COMP_3951_BlockForge_TechPro
             groupBoxWorkSpace.DragDrop += WorkSpace_DragDrop;
         }
 
-        /// <summary>
-        /// Creates the workspace delete target used to remove blocks by dragging them over the trash icon.
-        /// </summary>
         private void SetupDeleteDropZone()
         {
             _deleteDropZone = new PictureBox
@@ -282,6 +300,9 @@ namespace COMP_3951_BlockForge_TechPro
             return new Region(path);
         }
 
+        /// <summary>
+        /// Creates the console window UI and binds it to the in-memory workspace console.
+        /// </summary>
         private void SetupConsoleWindow()
         {
             groupBox3.Visible = false;
@@ -301,6 +322,9 @@ namespace COMP_3951_BlockForge_TechPro
             RefreshConsoleDisplay();
         }
 
+        /// <summary>
+        /// Refreshes the visible console list so it matches the stored console messages.
+        /// </summary>
         private void RefreshConsoleDisplay()
         {
             if (_consoleListBox == null)
@@ -316,6 +340,11 @@ namespace COMP_3951_BlockForge_TechPro
             }
         }
 
+        /// <summary>
+        /// Appends a message to the workspace console and refreshes the visible console window.
+        /// </summary>
+        /// <param name="severity">The severity level of the message.</param>
+        /// <param name="text">The text displayed in the console window.</param>
         private void AppendConsoleMessage(ConsoleMessageSeverity severity, string text)
         {
             _workspaceConsole.Append(new ConsoleMessage(severity, text));
@@ -323,9 +352,6 @@ namespace COMP_3951_BlockForge_TechPro
         }
 
         // Testing Templates
-        /// <summary>
-        /// Builds the default block templates shown in the toolbox.
-        /// </summary>
         private void CreateBlockTemplates()
         {
             // A container that sits at the TOP of BlockBin and auto-lays out blocks left-to-right
@@ -347,7 +373,7 @@ namespace COMP_3951_BlockForge_TechPro
             var block5 = MakeTemplateBlock("==", Color.Plum);
 
             // Size 
-            block1.Size = block2.Size = block3.Size = block4.Size = block5.Size = new Size(70, 60);
+            block1.Size = block2.Size = block3.Size = block4.Size = block5.Size = new Size(StandardBlockWidth, StandardBlockHeight);
 
             // Small gap between blocks (FlowLayoutPanel uses each control's Margin)
             block1.Margin = new Padding(0, 0, 8, 0);
@@ -376,7 +402,7 @@ namespace COMP_3951_BlockForge_TechPro
         {
             var p = new Panel
             {
-                Size = new Size(140, 45),
+                Size = new Size(StandardBlockWidth, StandardBlockHeight),
                 BackColor = color,
                 BorderStyle = BorderStyle.FixedSingle,
                 Cursor = Cursors.Hand,
@@ -425,11 +451,6 @@ namespace COMP_3951_BlockForge_TechPro
         }
 
         // Workspace DragDrop -> clone template into workspace 
-        /// <summary>
-        /// Creates and places a new workspace block from a dropped toolbox template.
-        /// </summary>
-        /// <param name="sender">The workspace control receiving the drop.</param>
-        /// <param name="e">The drag event arguments.</param>
         private void WorkSpace_DragDrop(object sender, DragEventArgs e)
         {
             if (e.Data == null) return;
@@ -459,16 +480,12 @@ namespace COMP_3951_BlockForge_TechPro
             newBlock.BringToFront();
 
             RegisterWorkspaceBlock(newBlock, snappedPlacement);
+            TryAttachBlockToConnector(newBlock);
             TryDeleteBlockOnDrop(newBlock);
             _deleteDropZone?.BringToFront();
         }
 
         // Clone template into a draggable workspace block 
-        /// <summary>
-        /// Clones a toolbox template into a movable workspace block.
-        /// </summary>
-        /// <param name="template">The source template panel.</param>
-        /// <returns>A workspace-ready block panel.</returns>
         private Panel CloneAsWorkspaceBlock(Panel template)
         {
             // Pull text/type from Tag, and color from BackColor
@@ -513,9 +530,10 @@ namespace COMP_3951_BlockForge_TechPro
 
         // Drag blocks around inside WorkSpace 
         private bool _dragging = false;
-        private Point _dragOffset;
+        private Point _dragOffset; // mouse offset within the panel being dragged
         private Panel? _activeBlock;
         private Color _activeBlockOriginalColor;
+
         private void WorkspaceBlock_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left) return;
@@ -526,7 +544,7 @@ namespace COMP_3951_BlockForge_TechPro
             _activeBlockOriginalColor = _activeBlock.BackColor;
             _activeBlock.BackColor = GetDragVisualColor(_activeBlockOriginalColor);
             _dragging = true;
-            _dragOffset = e.Location;
+            _dragOffset = e.Location; // where in the panel the mouse grabbed it
             _activeBlock.BringToFront();
             _deleteDropZone?.BringToFront();
         }
@@ -535,21 +553,18 @@ namespace COMP_3951_BlockForge_TechPro
         {
             if (!_dragging || _activeBlock == null) return;
 
+            // Mouse position relative to workspace
             Point mouseInWorkspace = groupBoxWorkSpace.PointToClient(MousePosition);
 
+            // New top-left = mouse minus grab offset
             Point newLoc = new Point(mouseInWorkspace.X - _dragOffset.X,
                                      mouseInWorkspace.Y - _dragOffset.Y);
 
             newLoc = ClampToBounds(newLoc, _activeBlock.Size, groupBoxWorkSpace.ClientSize);
-            _activeBlock.Location = newLoc;
+            MovePanelChainDuringDrag(_activeBlock, newLoc);
             _deleteDropZone?.BringToFront();
         }
 
-        /// <summary>
-        /// Finalizes a block drag, handling delete-on-drop, snap-to-grid, and occupancy rules.
-        /// </summary>
-        /// <param name="sender">The workspace block completing the drag.</param>
-        /// <param name="e">The mouse event arguments.</param>
         private void WorkspaceBlock_MouseUp(object sender, MouseEventArgs e)
         {
             if (_activeBlock != null)
@@ -572,6 +587,8 @@ namespace COMP_3951_BlockForge_TechPro
                 {
                     _activeBlock.Location = snappedPlacement.Location;
                     UpdateStoredBlockPosition(_activeBlock, snappedPlacement);
+                    AlignConnectedChildren(_activeBlock);
+                    TryAttachBlockToConnector(_activeBlock);
                 }
 
                 _activeBlock.BackColor = _activeBlockOriginalColor;
@@ -589,6 +606,11 @@ namespace COMP_3951_BlockForge_TechPro
             return Color.FromArgb(r, g, b);
         }
 
+        /// <summary>
+        /// Creates and stores the backing <see cref="CodeBlock"/> for a newly dropped workspace block.
+        /// </summary>
+        /// <param name="blockPanel">The workspace panel representing the block.</param>
+        /// <param name="snappedPlacement">The snapped placement assigned to the block.</param>
         private void RegisterWorkspaceBlock(Panel blockPanel, SnappedPlacement snappedPlacement)
         {
             (CodeBlockType blockType, string blockName, VariableBlockType? variableType) = ResolveBlockMetadata(blockPanel.Tag);
@@ -602,16 +624,12 @@ namespace COMP_3951_BlockForge_TechPro
                 blockType,
                 blockName,
                 variableType);
+            ApplyVariableBlockValues(codeBlock, blockPanel.Tag);
 
             _workspaceBlocks[blockPanel] = codeBlock;
             AppendConsoleMessage(ConsoleMessageSeverity.Message, $"{blockName} block created.");
         }
 
-        /// <summary>
-        /// Deletes a workspace block if it overlaps the trash icon.
-        /// </summary>
-        /// <param name="blockPanel">The block being evaluated for deletion.</param>
-        /// <returns><see langword="true"/> if the block was deleted; otherwise, <see langword="false"/>.</returns>
         private bool TryDeleteBlockOnDrop(Panel blockPanel)
         {
             if (_deleteDropZone == null || !blockPanel.Bounds.IntersectsWith(_deleteDropZone.Bounds))
@@ -620,6 +638,13 @@ namespace COMP_3951_BlockForge_TechPro
             }
 
             string blockName = GetBlockDisplayText(blockPanel.Tag);
+            RemoveConnectorVisualForChild(blockPanel);
+
+            if (_workspaceBlocks.TryGetValue(blockPanel, out CodeBlock? codeBlock))
+            {
+                DisconnectBlockFromConnector(codeBlock);
+            }
+
             _workspaceBlocks.Remove(blockPanel);
             groupBoxWorkSpace.Controls.Remove(blockPanel);
             blockPanel.Dispose();
@@ -628,9 +653,6 @@ namespace COMP_3951_BlockForge_TechPro
             return true;
         }
 
-        /// <summary>
-        /// Creates the toolbox toolbar that exposes variable block actions.
-        /// </summary>
         private void SetupVariableToolbar()
         {
             _variableToolStrip = new ToolStrip
@@ -659,10 +681,6 @@ namespace COMP_3951_BlockForge_TechPro
             AppendConsoleMessage(ConsoleMessageSeverity.Message, $"Added variable block: {dialog.Result.VariableName} ({dialog.Result.VariableType})");
         }
 
-        /// <summary>
-        /// Adds a variable block template to the toolbox row.
-        /// </summary>
-        /// <param name="variable">The variable block metadata used to build the template.</param>
         private void AddVariableTemplate(VariableBlock variable)
         {
             if (_blockBinRow == null)
@@ -679,7 +697,7 @@ namespace COMP_3951_BlockForge_TechPro
             };
 
             var variableTemplate = MakeTemplateBlock(GetBlockDisplayText(variable), variableColor, variable);
-            variableTemplate.Size = new Size(130, 60);
+            variableTemplate.Size = new Size(StandardBlockWidth, StandardBlockHeight);
             variableTemplate.Margin = new Padding(0, 0, 8, 0);
             _blockBinRow.Controls.Add(variableTemplate);
         }
@@ -705,11 +723,46 @@ namespace COMP_3951_BlockForge_TechPro
             return tagValue?.ToString() ?? "Block";
         }
 
-        /// <summary>
-        /// Resolves internal block metadata from a block tag value.
-        /// </summary>
-        /// <param name="tagValue">The tag value stored on a block.</param>
-        /// <returns>The resolved block type, block name, and optional variable type.</returns>
+        private static Color GetBlockColor(CodeBlockType blockType, VariableBlockType? variableType = null)
+        {
+            if (blockType == CodeBlockType.Variable)
+            {
+                return variableType switch
+                {
+                    VariableBlockType.String => Color.LightSkyBlue,
+                    VariableBlockType.Int => Color.LightGoldenrodYellow,
+                    VariableBlockType.Bool => Color.LightCoral,
+                    _ => Color.LightGray
+                };
+            }
+
+            return blockType switch
+            {
+                CodeBlockType.If => Color.Aqua,
+                CodeBlockType.While => Color.PeachPuff,
+                CodeBlockType.Run => Color.Green,
+                CodeBlockType.Print => Color.Khaki,
+                CodeBlockType.Equals => Color.Plum,
+                _ => Color.LightGray
+            };
+        }
+
+        private static object CreateWorkspaceTagFromCodeBlock(CodeBlock codeBlock)
+        {
+            if (codeBlock.BlockType != CodeBlockType.Variable || !codeBlock.VariableType.HasValue)
+            {
+                return codeBlock.BlockName ?? codeBlock.BlockType.ToString();
+            }
+
+            return codeBlock.VariableType.Value switch
+            {
+                VariableBlockType.String => VariableBlock.CreateString(codeBlock.BlockName ?? "variable", codeBlock.StringValue ?? string.Empty),
+                VariableBlockType.Int => VariableBlock.CreateInt(codeBlock.BlockName ?? "variable", codeBlock.IntValue ?? 0),
+                VariableBlockType.Bool => VariableBlock.CreateBool(codeBlock.BlockName ?? "variable", codeBlock.BoolValue ?? false),
+                _ => codeBlock.BlockName ?? "variable"
+            };
+        }
+
         private static (CodeBlockType BlockType, string BlockName, VariableBlockType? VariableType) ResolveBlockMetadata(object? tagValue)
         {
             if (tagValue is VariableBlock variableBlock)
@@ -729,6 +782,17 @@ namespace COMP_3951_BlockForge_TechPro
             };
 
             return (blockType, blockName, null);
+        }
+
+        private static void ApplyVariableBlockValues(CodeBlock codeBlock, object? tagValue)
+        {
+            if (tagValue is not VariableBlock variableBlock)
+            {
+                codeBlock.UpdateVariableValues();
+                return;
+            }
+
+            codeBlock.UpdateVariableValues(variableBlock.StringValue, variableBlock.IntValue, variableBlock.BoolValue);
         }
 
         private void Block_Click(object? sender, EventArgs e)
@@ -751,6 +815,11 @@ namespace COMP_3951_BlockForge_TechPro
             AppendConsoleMessage(ConsoleMessageSeverity.Message, $"Clicked block '{blockName}' type: {typeText}");
         }
 
+        /// <summary>
+        /// Updates the stored <see cref="CodeBlock"/> position after a valid block move.
+        /// </summary>
+        /// <param name="blockPanel">The workspace panel representing the block.</param>
+        /// <param name="snappedPlacement">The snapped placement assigned to the block.</param>
         private void UpdateStoredBlockPosition(Panel blockPanel, SnappedPlacement snappedPlacement)
         {
             if (!_workspaceBlocks.TryGetValue(blockPanel, out CodeBlock? codeBlock))
@@ -760,8 +829,13 @@ namespace COMP_3951_BlockForge_TechPro
 
             codeBlock.UpdatePosition(snappedPlacement.Location.X, snappedPlacement.Location.Y);
             codeBlock.UpdateGridPosition(snappedPlacement.GridPosition.Column, snappedPlacement.GridPosition.Row);
+            RepositionConnectorForChild(blockPanel);
         }
 
+        /// <summary>
+        /// Restores a workspace block to its last stored valid position.
+        /// </summary>
+        /// <param name="blockPanel">The workspace panel to restore.</param>
         private void RestoreStoredBlockPosition(Panel blockPanel)
         {
             if (!_workspaceBlocks.TryGetValue(blockPanel, out CodeBlock? codeBlock))
@@ -770,8 +844,16 @@ namespace COMP_3951_BlockForge_TechPro
             }
 
             blockPanel.Location = new Point((int)codeBlock.PosX, (int)codeBlock.PosY);
+            AlignConnectedChildren(blockPanel);
+            RepositionConnectorForChild(blockPanel);
         }
 
+        /// <summary>
+        /// Determines whether a grid cell is already occupied by another workspace block.
+        /// </summary>
+        /// <param name="gridPosition">The grid position to check.</param>
+        /// <param name="movingBlock">The block currently being moved, if any.</param>
+        /// <returns><see langword="true"/> if the grid cell is occupied; otherwise, <see langword="false"/>.</returns>
         private bool IsGridCellOccupied(GridPosition gridPosition, Panel? movingBlock = null)
         {
             foreach (KeyValuePair<Panel, CodeBlock> workspaceBlock in _workspaceBlocks)
@@ -791,6 +873,220 @@ namespace COMP_3951_BlockForge_TechPro
             return false;
         }
 
+        private void MovePanelChainDuringDrag(Panel rootPanel, Point newRootLocation)
+        {
+            Point delta = new(newRootLocation.X - rootPanel.Location.X, newRootLocation.Y - rootPanel.Location.Y);
+            rootPanel.Location = newRootLocation;
+            MoveChildPanelsByDelta(rootPanel, delta);
+        }
+
+        private void MoveChildPanelsByDelta(Panel parentPanel, Point delta)
+        {
+            Panel? childPanel = GetChildPanel(parentPanel);
+            if (childPanel == null)
+            {
+                return;
+            }
+
+            childPanel.Location = new Point(childPanel.Location.X + delta.X, childPanel.Location.Y + delta.Y);
+            RepositionConnectorForChild(childPanel);
+            MoveChildPanelsByDelta(childPanel, delta);
+        }
+
+        private Panel? GetChildPanel(Panel parentPanel)
+        {
+            if (!_workspaceBlocks.TryGetValue(parentPanel, out CodeBlock? parentBlock) ||
+                string.IsNullOrWhiteSpace(parentBlock.ChildBlockUid))
+            {
+                return null;
+            }
+
+            return GetPanelByUid(parentBlock.ChildBlockUid);
+        }
+
+        private Panel? GetParentPanel(Panel childPanel)
+        {
+            if (!_workspaceBlocks.TryGetValue(childPanel, out CodeBlock? childBlock) ||
+                string.IsNullOrWhiteSpace(childBlock.ParentBlockUid))
+            {
+                return null;
+            }
+
+            return GetPanelByUid(childBlock.ParentBlockUid);
+        }
+
+        private Panel? GetPanelByUid(string uid)
+        {
+            foreach (KeyValuePair<Panel, CodeBlock> workspaceBlock in _workspaceBlocks)
+            {
+                if (workspaceBlock.Value.Uid == uid)
+                {
+                    return workspaceBlock.Key;
+                }
+            }
+
+            return null;
+        }
+
+        private Panel? FindAttachableParentPanel(Panel childPanel)
+        {
+            if (!_workspaceBlocks.TryGetValue(childPanel, out CodeBlock? childBlock))
+            {
+                return null;
+            }
+
+            foreach (KeyValuePair<Panel, CodeBlock> workspaceBlock in _workspaceBlocks)
+            {
+                if (workspaceBlock.Key == childPanel)
+                {
+                    continue;
+                }
+
+                CodeBlock parentBlock = workspaceBlock.Value;
+                bool isDirectlyBelowParent =
+                    parentBlock.GridColumn == childBlock.GridColumn &&
+                    parentBlock.GridRow + 1 == childBlock.GridRow;
+
+                if (isDirectlyBelowParent && _blockConnectorService.CanConnect(parentBlock, childBlock))
+                {
+                    return workspaceBlock.Key;
+                }
+            }
+
+            return null;
+        }
+
+        private void TryAttachBlockToConnector(Panel childPanel)
+        {
+            if (!_workspaceBlocks.TryGetValue(childPanel, out CodeBlock? childBlock))
+            {
+                return;
+            }
+
+            Panel? existingParentPanel = GetParentPanel(childPanel);
+            Panel? attachableParentPanel = FindAttachableParentPanel(childPanel);
+
+            if (existingParentPanel != null && existingParentPanel != attachableParentPanel)
+            {
+                DisconnectBlockFromConnector(childBlock);
+            }
+
+            if (attachableParentPanel == null)
+            {
+                RemoveConnectorVisualForChild(childPanel);
+                return;
+            }
+
+            if (!_workspaceBlocks.TryGetValue(attachableParentPanel, out CodeBlock? parentBlock))
+            {
+                return;
+            }
+
+            if (childBlock.ParentBlockUid != parentBlock.Uid)
+            {
+                _blockConnectorService.Connect(parentBlock, childBlock);
+                childPanel.Location = new Point((int)childBlock.PosX, (int)childBlock.PosY);
+                AppendConsoleMessage(ConsoleMessageSeverity.Message, $"Connected {childBlock.BlockName ?? childBlock.Uid} to {parentBlock.BlockName ?? parentBlock.Uid}.");
+            }
+
+            EnsureConnectorVisual(attachableParentPanel, childPanel);
+            RepositionConnectorForChild(childPanel);
+            AlignConnectedChildren(childPanel);
+        }
+
+        private void DisconnectBlockFromConnector(CodeBlock block)
+        {
+            Dictionary<string, CodeBlock> blocksByUid = _workspaceBlocks.Values.ToDictionary(workspaceBlock => workspaceBlock.Uid, workspaceBlock => workspaceBlock);
+            _blockConnectorService.Disconnect(block, blocksByUid);
+
+            Panel? childPanel = GetPanelByUid(block.Uid);
+            if (childPanel != null)
+            {
+                RemoveConnectorVisualForChild(childPanel);
+            }
+        }
+
+        private void EnsureConnectorVisual(Panel parentPanel, Panel childPanel)
+        {
+            if (_connectorControlsByChild.ContainsKey(childPanel))
+            {
+                return;
+            }
+
+            BlockConnectorControl connector = new()
+            {
+                Tag = childPanel
+            };
+
+            _connectorControlsByChild[childPanel] = connector;
+            groupBoxWorkSpace.Controls.Add(connector);
+            connector.BringToFront();
+            childPanel.BringToFront();
+            _deleteDropZone?.BringToFront();
+        }
+
+        private void RemoveConnectorVisualForChild(Panel childPanel)
+        {
+            if (!_connectorControlsByChild.TryGetValue(childPanel, out BlockConnectorControl? connector))
+            {
+                return;
+            }
+
+            _connectorControlsByChild.Remove(childPanel);
+            groupBoxWorkSpace.Controls.Remove(connector);
+            connector.Dispose();
+        }
+
+        private void RepositionConnectorForChild(Panel childPanel)
+        {
+            if (!_connectorControlsByChild.TryGetValue(childPanel, out BlockConnectorControl? connector))
+            {
+                return;
+            }
+
+            Panel? parentPanel = GetParentPanel(childPanel);
+            if (parentPanel == null)
+            {
+                return;
+            }
+
+            int connectorX = parentPanel.Left + (parentPanel.Width - connector.Width) / 2;
+            int connectorY = parentPanel.Bottom + (childPanel.Top - parentPanel.Bottom - connector.Height) / 2;
+
+            connector.Location = new Point(connectorX, connectorY);
+            connector.BringToFront();
+            childPanel.BringToFront();
+            _deleteDropZone?.BringToFront();
+        }
+
+        private void AlignConnectedChildren(Panel parentPanel)
+        {
+            Panel? childPanel = GetChildPanel(parentPanel);
+            if (childPanel == null ||
+                !_workspaceBlocks.TryGetValue(parentPanel, out CodeBlock? parentBlock) ||
+                !_workspaceBlocks.TryGetValue(childPanel, out CodeBlock? childBlock))
+            {
+                return;
+            }
+
+            Dictionary<string, CodeBlock> blocksByUid = _workspaceBlocks.Values.ToDictionary(workspaceBlock => workspaceBlock.Uid, workspaceBlock => workspaceBlock);
+            _blockConnectorService.MoveChain(parentBlock, blocksByUid, parentBlock.GridColumn, parentBlock.GridRow);
+
+            CodeBlock currentBlock = parentBlock;
+            Panel? currentPanel = parentPanel;
+            while (currentPanel != null && currentBlock != null)
+            {
+                currentPanel.Location = new Point((int)currentBlock.PosX, (int)currentBlock.PosY);
+                RepositionConnectorForChild(currentPanel);
+
+                currentPanel = GetChildPanel(currentPanel);
+                currentBlock = currentPanel != null && _workspaceBlocks.TryGetValue(currentPanel, out CodeBlock? nextBlock)
+                    ? nextBlock
+                    : null;
+            }
+        }
+
+        // keep blocks inside workspace bounds
         private Point ClampToBounds(Point loc, Size blockSize, Size containerSize)
         {
             int x = loc.X;
@@ -859,9 +1155,203 @@ namespace COMP_3951_BlockForge_TechPro
 
         }
 
+        private Project CreateWorkspaceProjectSnapshot(string projectName)
+        {
+            List<CodeBlock> blocks = new();
+
+            foreach (KeyValuePair<Panel, CodeBlock> workspaceBlock in _workspaceBlocks)
+            {
+                CodeBlock source = workspaceBlock.Value;
+                object? tagValue = workspaceBlock.Key.Tag;
+
+                var snapshot = new CodeBlock(
+                    source.PosX,
+                    source.PosY,
+                    source.Uid,
+                    source.GridColumn,
+                    source.GridRow,
+                    source.BlockType,
+                    source.BlockName,
+                    source.VariableType,
+                    source.StringValue,
+                    source.IntValue,
+                    source.BoolValue,
+                    source.ParentBlockUid,
+                    source.ChildBlockUid);
+
+                ApplyVariableBlockValues(snapshot, tagValue);
+                blocks.Add(snapshot);
+            }
+
+            return new Project(projectName, blocks);
+        }
+
+        private void ReportWorkspaceSaveSuccess()
+        {
+            _workspaceSaveNotifier.ReportSaveSuccess();
+            RefreshConsoleDisplay();
+        }
+
+        private void SaveWorkspaceLayout()
+        {
+            using SaveFileDialog saveDialog = new()
+            {
+                Filter = "BlockForge Project (*.bfg)|*.bfg|All files (*.*)|*.*",
+                DefaultExt = "bfg",
+                AddExtension = true,
+                OverwritePrompt = true,
+                FileName = "workspace.bfg"
+            };
+
+            if (saveDialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            string projectName = Path.GetFileNameWithoutExtension(saveDialog.FileName);
+            Project project = CreateWorkspaceProjectSnapshot(projectName);
+
+            try
+            {
+                _projectFileManager.SaveFile(project, saveDialog.FileName);
+                ReportWorkspaceSaveSuccess();
+            }
+            catch (Exception ex)
+            {
+                AppendConsoleMessage(ConsoleMessageSeverity.Warning, $"Save failed: {ex.Message}");
+            }
+        }
+
+        private void ClearWorkspaceBlocks()
+        {
+            foreach (BlockConnectorControl connector in _connectorControlsByChild.Values)
+            {
+                groupBoxWorkSpace.Controls.Remove(connector);
+                connector.Dispose();
+            }
+
+            _connectorControlsByChild.Clear();
+            List<Panel> workspacePanels = new(_workspaceBlocks.Keys);
+
+            foreach (Panel panel in workspacePanels)
+            {
+                groupBoxWorkSpace.Controls.Remove(panel);
+                panel.Dispose();
+            }
+
+            _workspaceBlocks.Clear();
+            _deleteDropZone?.BringToFront();
+        }
+
+        private Panel CreateImportedWorkspaceBlock(CodeBlock codeBlock)
+        {
+            object workspaceTag = CreateWorkspaceTagFromCodeBlock(codeBlock);
+            string text = GetBlockDisplayText(workspaceTag);
+            Color color = GetBlockColor(codeBlock.BlockType, codeBlock.VariableType);
+
+            var panel = new Panel
+            {
+                Size = new Size(StandardBlockWidth, StandardBlockHeight),
+                BackColor = color,
+                BorderStyle = BorderStyle.FixedSingle,
+                Cursor = Cursors.SizeAll,
+                Tag = workspaceTag,
+                Location = new Point((int)codeBlock.PosX, (int)codeBlock.PosY)
+            };
+
+            var label = new Label
+            {
+                Text = text,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold)
+            };
+
+            panel.Controls.Add(label);
+            panel.MouseDown += WorkspaceBlock_MouseDown;
+            panel.MouseMove += WorkspaceBlock_MouseMove;
+            panel.MouseUp += WorkspaceBlock_MouseUp;
+            label.MouseDown += (s, e) => WorkspaceBlock_MouseDown(panel, e);
+            label.MouseMove += (s, e) => WorkspaceBlock_MouseMove(panel, e);
+            label.MouseUp += (s, e) => WorkspaceBlock_MouseUp(panel, e);
+            panel.Click += Block_Click;
+            label.Click += (s, e) => Block_Click(panel, e);
+
+            return panel;
+        }
+
+        private void LoadWorkspaceLayout()
+        {
+            using OpenFileDialog openDialog = new()
+            {
+                Filter = "BlockForge Project (*.bfg)|*.bfg|All files (*.*)|*.*",
+                DefaultExt = "bfg",
+                CheckFileExists = true,
+                Multiselect = false
+            };
+
+            if (openDialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            try
+            {
+                Project project = _projectFileManager.LoadFile(openDialog.FileName);
+
+                ClearWorkspaceBlocks();
+
+                foreach (CodeBlock codeBlock in project.CodeBlocks)
+                {
+                    Panel panel = CreateImportedWorkspaceBlock(codeBlock);
+                    groupBoxWorkSpace.Controls.Add(panel);
+                    panel.BringToFront();
+
+                    var storedBlock = new CodeBlock(
+                        codeBlock.PosX,
+                        codeBlock.PosY,
+                        codeBlock.Uid,
+                        codeBlock.GridColumn,
+                        codeBlock.GridRow,
+                        codeBlock.BlockType,
+                        codeBlock.BlockName,
+                        codeBlock.VariableType,
+                        codeBlock.StringValue,
+                        codeBlock.IntValue,
+                        codeBlock.BoolValue,
+                        codeBlock.ParentBlockUid,
+                        codeBlock.ChildBlockUid);
+
+                    _workspaceBlocks[panel] = storedBlock;
+                }
+
+                foreach (Panel panel in _workspaceBlocks.Keys)
+                {
+                    if (GetParentPanel(panel) != null)
+                    {
+                        EnsureConnectorVisual(GetParentPanel(panel)!, panel);
+                        RepositionConnectorForChild(panel);
+                    }
+                }
+
+                _deleteDropZone?.BringToFront();
+                AppendConsoleMessage(ConsoleMessageSeverity.Message, $"Loaded workspace: {project.ProjectName}");
+            }
+            catch (Exception ex)
+            {
+                AppendConsoleMessage(ConsoleMessageSeverity.Warning, $"Load failed: {ex.Message}");
+            }
+        }
+
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //SaveWorkspaceLayout();
+            SaveWorkspaceLayout();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadWorkspaceLayout();
         }
     }
 }
+

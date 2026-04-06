@@ -32,4 +32,24 @@ public sealed class CodeBlockTests
         Assert.AreEqual(600, block.PosY, 1e-6);
         Assert.AreEqual("UID-1", block.Uid);
     }
+
+    [TestMethod]
+    public void CodeBlock_Construction_PreservesVariableValues()
+    {
+        var block = new CodeBlock(
+            150,
+            300,
+            "UID-1",
+            blockType: CodeBlockType.Variable,
+            blockName: "score",
+            variableType: VariableBlockType.Int,
+            intValue: 42);
+
+        Assert.AreEqual(CodeBlockType.Variable, block.BlockType);
+        Assert.AreEqual("score", block.BlockName);
+        Assert.AreEqual(VariableBlockType.Int, block.VariableType);
+        Assert.AreEqual(42, block.IntValue);
+        Assert.IsNull(block.StringValue);
+        Assert.IsNull(block.BoolValue);
+    }
 }

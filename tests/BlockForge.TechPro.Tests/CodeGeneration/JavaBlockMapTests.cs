@@ -49,6 +49,23 @@ public sealed class JavaBlockMapTests
     }
 
     [TestMethod]
+    public void ToJava_IntVariable_UsesBlockMetadataForNameAndType()
+    {
+        CodeBlock block = new(
+            0,
+            0,
+            "var-2",
+            blockType: CodeBlockType.Variable,
+            blockName: "playerScore",
+            variableType: VariableBlockType.Int,
+            intValue: 42);
+
+        string java = JavaBlockMap.ToJava(block);
+
+        Assert.AreEqual("int playerScore = 0;", java);
+    }
+
+    [TestMethod]
     public void ToJava_UnknownType_Throws()
     {
         CodeBlock block = new(0, 0, "unknown-1");

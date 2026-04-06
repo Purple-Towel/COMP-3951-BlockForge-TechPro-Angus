@@ -12,14 +12,14 @@ namespace BlockForge.TechPro.Tests.SnapGrid;
 [TestClass]
 public sealed class GridSnapServiceTests
 {
-    private readonly GridSnapService _service = new(40, 40);
+    private readonly GridSnapService _service = new(140, 72);
 
     [TestMethod]
     public void GetGridPosition_RawCoordinates_MapToExpectedGridCell()
     {
         GridPosition result = _service.GetGridPosition(new Point(78, 81));
 
-        Assert.AreEqual(new GridPosition(2, 2), result);
+        Assert.AreEqual(new GridPosition(1, 1), result);
     }
 
     [TestMethod]
@@ -27,7 +27,7 @@ public sealed class GridSnapServiceTests
     {
         Point result = _service.GetSnappedLocation(new GridPosition(3, 4));
 
-        Assert.AreEqual(new Point(120, 160), result);
+        Assert.AreEqual(new Point(420, 288), result);
     }
 
     [TestMethod]
@@ -38,8 +38,8 @@ public sealed class GridSnapServiceTests
             new Size(70, 60),
             new Size(400, 300));
 
-        Assert.AreEqual(new GridPosition(2, 2), result.GridPosition);
-        Assert.AreEqual(new Point(80, 80), result.Location);
+        Assert.AreEqual(new GridPosition(1, 1), result.GridPosition);
+        Assert.AreEqual(new Point(140, 72), result.Location);
     }
 
     [TestMethod]
@@ -47,16 +47,16 @@ public sealed class GridSnapServiceTests
     {
         var block = new CodeBlock(0, 0, "block-1", 0, 0);
         SnappedPlacement result = _service.Snap(
-            new Point(121, 39),
+            new Point(421, 75),
             new Size(70, 60),
             new Size(400, 300));
 
         block.UpdatePosition(result.Location.X, result.Location.Y);
         block.UpdateGridPosition(result.GridPosition.Column, result.GridPosition.Row);
 
-        Assert.AreEqual(120d, block.PosX);
-        Assert.AreEqual(40d, block.PosY);
-        Assert.AreEqual(3, block.GridColumn);
+        Assert.AreEqual(280d, block.PosX);
+        Assert.AreEqual(72d, block.PosY);
+        Assert.AreEqual(2, block.GridColumn);
         Assert.AreEqual(1, block.GridRow);
     }
 
@@ -68,8 +68,8 @@ public sealed class GridSnapServiceTests
             new Size(70, 60),
             new Size(400, 300));
 
-        Assert.AreEqual(new GridPosition(8, 6), result.GridPosition);
-        Assert.AreEqual(new Point(320, 240), result.Location);
+        Assert.AreEqual(new GridPosition(2, 3), result.GridPosition);
+        Assert.AreEqual(new Point(280, 216), result.Location);
     }
 
     [TestMethod]
@@ -85,10 +85,10 @@ public sealed class GridSnapServiceTests
     }
 
     [DataTestMethod]
-    [DataRow(40, 40, 1, 1)]
-    [DataRow(39, 39, 1, 1)]
-    [DataRow(20, 20, 1, 1)]
-    [DataRow(19, 19, 0, 0)]
+    [DataRow(140, 72, 1, 1)]
+    [DataRow(139, 71, 1, 1)]
+    [DataRow(70, 36, 1, 1)]
+    [DataRow(69, 35, 0, 0)]
     public void GetGridPosition_BoundaryConditions_OnGridLinesBehaveAsExpected(
         int x,
         int y,
@@ -114,12 +114,15 @@ public sealed class GridSnapServiceTests
     }
 
     [DataTestMethod]
-    [DataRow(0, 40)]
-    [DataRow(40, 0)]
-    [DataRow(-1, 40)]
-    [DataRow(40, -1)]
+    [DataRow(0, 72)]
+    [DataRow(140, 0)]
+    [DataRow(-1, 72)]
+    [DataRow(140, -1)]
     public void Constructor_InvalidCellDimensions_ThrowsArgumentOutOfRangeException(int width, int height)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new GridSnapService(width, height));
     }
 }
+
+
+

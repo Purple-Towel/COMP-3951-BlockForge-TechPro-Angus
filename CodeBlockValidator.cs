@@ -21,6 +21,12 @@ namespace COMP_3951_BlockForge_TechPro
             var errors = new List<String>();
             var encountered = new HashSet<String>();
 
+            if (blocks.Count == 0)
+            {
+                errors.Add("Workspace is empty.");
+                return errors;
+            }
+
             foreach (var block in blocks)
             {
                 if (string.IsNullOrWhiteSpace(block.Uid))
@@ -32,6 +38,24 @@ namespace COMP_3951_BlockForge_TechPro
                 if (!encountered.Add(block.Uid))
                 {
                     errors.Add($"{block.Uid} is a duplicate.");
+                }
+
+                if (block.BlockType == CodeBlockType.Unknown)
+                {
+                    errors.Add($"Unsupported block type for {block.Uid}.");
+                }
+
+                if (block.BlockType == CodeBlockType.Variable)
+                {
+                    if (!block.VariableType.HasValue)
+                    {
+                        errors.Add($"Variable block {block.Uid} is missing a VariableType.");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(block.BlockName))
+                    {
+                        errors.Add($"Variable block {block.Uid} is missing a variable name.");
+                    }
                 }
             }
 
