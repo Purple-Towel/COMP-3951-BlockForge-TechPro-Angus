@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -44,11 +44,6 @@ namespace COMP_3951_BlockForge_TechPro
         public CodeBlockType BlockType { get; set; }
         public string? BlockName { get; set; }
         public VariableBlockType? VariableType { get; set; }
-        public string? StringValue { get; set; }
-        public int? IntValue { get; set; }
-        public bool? BoolValue { get; set; }
-        public string? ParentBlockUid { get; set; }
-        public string? ChildBlockUid { get; set; }
 
         /// <summary>
         /// Constructor for a CodeBlock.
@@ -66,12 +61,7 @@ namespace COMP_3951_BlockForge_TechPro
             int gridRow = 0,
             CodeBlockType blockType = CodeBlockType.Unknown,
             string? blockName = null,
-            VariableBlockType? variableType = null,
-            string? stringValue = null,
-            int? intValue = null,
-            bool? boolValue = null,
-            string? parentBlockUid = null,
-            string? childBlockUid = null)
+            VariableBlockType? variableType = null)
         {
             this.PosX = posX;
             this.PosY = posY;
@@ -81,11 +71,6 @@ namespace COMP_3951_BlockForge_TechPro
             this.BlockType = blockType;
             this.BlockName = blockName;
             this.VariableType = variableType;
-            this.StringValue = stringValue;
-            this.IntValue = intValue;
-            this.BoolValue = boolValue;
-            this.ParentBlockUid = parentBlockUid;
-            this.ChildBlockUid = childBlockUid;
         }
 
         /// <summary>
@@ -122,20 +107,6 @@ namespace COMP_3951_BlockForge_TechPro
             this.BlockType = blockType;
             this.BlockName = blockName;
             this.VariableType = variableType;
-        }
-
-        /// <summary>
-        /// Updates the stored variable value fields for blocks that represent variables.
-        /// Non-matching fields should be left null by the caller.
-        /// </summary>
-        /// <param name="stringValue">The string value for string variables.</param>
-        /// <param name="intValue">The integer value for int variables.</param>
-        /// <param name="boolValue">The Boolean value for bool variables.</param>
-        public void UpdateVariableValues(string? stringValue = null, int? intValue = null, bool? boolValue = null)
-        {
-            this.StringValue = stringValue;
-            this.IntValue = intValue;
-            this.BoolValue = boolValue;
         }
     }
 }

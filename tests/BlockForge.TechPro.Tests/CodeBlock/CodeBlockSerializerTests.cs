@@ -52,31 +52,4 @@ public sealed class CodeBlockSerializerTests
         Assert.IsNotNull(load);
         Assert.AreEqual(0, load.Count);
     }
-
-    [TestMethod]
-    public void Serialize_VariableBlock_PreservesVariableValueFields()
-    {
-        var block = new CodeBlock(
-            160,
-            240,
-            "UID-VAR-1",
-            4,
-            6,
-            CodeBlockType.Variable,
-            "score",
-            VariableBlockType.Int,
-            intValue: 42);
-
-        string json = CodeBlockSerializer.Serialize(block);
-        var load = CodeBlockSerializer.DeserializeSingle(json);
-
-        Assert.IsNotNull(load);
-        Assert.AreEqual(block.Uid, load.Uid);
-        Assert.AreEqual(CodeBlockType.Variable, load.BlockType);
-        Assert.AreEqual("score", load.BlockName);
-        Assert.AreEqual(VariableBlockType.Int, load.VariableType);
-        Assert.AreEqual(42, load.IntValue);
-        Assert.IsNull(load.StringValue);
-        Assert.IsNull(load.BoolValue);
-    }
 }

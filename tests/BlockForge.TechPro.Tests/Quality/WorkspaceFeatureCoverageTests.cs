@@ -415,58 +415,6 @@ public sealed class WorkspaceFeatureCoverageTests
         Assert.AreEqual("enabled : Bool", text);
     }
 
-    [TestMethod]
-    [TestCategory("User Interaction Testing")]
-    public void ConnectorVisual_IsCreated_WhenChildSnapsBelowValidParent()
-    {
-        using Form1 form = new();
-        GroupBox workspace = GetPrivateField<GroupBox>(form, "groupBoxWorkSpace");
-        Dictionary<Panel, CodeBlock> workspaceBlocks = GetPrivateField<Dictionary<Panel, CodeBlock>>(form, "_workspaceBlocks");
-        Dictionary<Panel, BlockConnectorControl> connectorControls = GetPrivateField<Dictionary<Panel, BlockConnectorControl>>(form, "_connectorControlsByChild");
-        Panel parent = new() { Size = new Size(140, 45), Location = new Point(280, 216), Tag = "Run" };
-        Panel child = new() { Size = new Size(140, 45), Location = new Point(280, 288), Tag = "Print" };
-
-        workspace.Controls.Add(parent);
-        workspace.Controls.Add(child);
-        workspaceBlocks[parent] = new CodeBlock(280, 216, "uid-parent", 2, 3, CodeBlockType.Run, "Run");
-        workspaceBlocks[child] = new CodeBlock(280, 288, "uid-child", 2, 4, CodeBlockType.Print, "Print");
-
-        InvokePrivateInstance(form, "TryAttachBlockToConnector", [child]);
-
-        Assert.AreEqual("uid-child", workspaceBlocks[parent].ChildBlockUid);
-        Assert.AreEqual("uid-parent", workspaceBlocks[child].ParentBlockUid);
-        Assert.IsTrue(connectorControls.ContainsKey(child));
-        Assert.IsTrue(workspace.Controls.Contains(connectorControls[child]));
-    }
-
-    [TestMethod]
-    [TestCategory("User Interaction Testing")]
-    public void ConnectorVisual_Repositions_WhenConnectedParentMoves()
-    {
-        using Form1 form = new();
-        GroupBox workspace = GetPrivateField<GroupBox>(form, "groupBoxWorkSpace");
-        Dictionary<Panel, CodeBlock> workspaceBlocks = GetPrivateField<Dictionary<Panel, CodeBlock>>(form, "_workspaceBlocks");
-        Dictionary<Panel, BlockConnectorControl> connectorControls = GetPrivateField<Dictionary<Panel, BlockConnectorControl>>(form, "_connectorControlsByChild");
-        Panel parent = new() { Size = new Size(140, 45), Location = new Point(280, 216), Tag = "Run" };
-        Panel child = new() { Size = new Size(140, 45), Location = new Point(280, 288), Tag = "Print" };
-
-        workspace.Controls.Add(parent);
-        workspace.Controls.Add(child);
-        workspaceBlocks[parent] = new CodeBlock(280, 216, "uid-parent", 2, 3, CodeBlockType.Run, "Run");
-        workspaceBlocks[child] = new CodeBlock(280, 288, "uid-child", 2, 4, CodeBlockType.Print, "Print");
-        InvokePrivateInstance(form, "TryAttachBlockToConnector", [child]);
-        BlockConnectorControl connector = connectorControls[child];
-
-        InvokePrivateInstance(form, "MovePanelChainDuringDrag", [parent, new Point(420, 360)]);
-        InvokePrivateInstance(form, "UpdateStoredBlockPosition", [parent, new SnappedPlacement(new Point(420, 360), new GridPosition(3, 5))]);
-        InvokePrivateInstance(form, "AlignConnectedChildren", [parent]);
-
-        int expectedConnectorTop = parent.Bottom + (child.Top - parent.Bottom - connector.Height) / 2;
-        Assert.AreEqual(new Point(420, 432), child.Location);
-        Assert.AreEqual(parent.Left + (parent.Width - connector.Width) / 2, connector.Left);
-        Assert.AreEqual(expectedConnectorTop, connector.Top);
-    }
-
     private static object? InvokePrivateStatic(string methodName, object?[]? args)
     {
         MethodInfo? method = typeof(Form1).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
@@ -490,4 +438,3 @@ public sealed class WorkspaceFeatureCoverageTests
         return (T)value;
     }
 }
-
