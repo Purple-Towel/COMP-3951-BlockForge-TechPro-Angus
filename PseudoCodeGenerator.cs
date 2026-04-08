@@ -31,8 +31,8 @@ namespace COMP_3951_BlockForge_TechPro
                 case CodeBlockType.End:
                     return new List<string> { "END" };
 
-                case CodeBlockType.Print:
-                    return new List<string> { $"PRINT \"{block.BlockName ?? "[EMPTY]"}\"" };
+                case CodeBlockType.Do:
+                    return new List<string> { $"DO \"{block.BlockName ?? "[EMPTY]"}\"" };
 
                 case CodeBlockType.If:
                     return new List<string> { $"IF {block.BlockName ?? "[NO CONDITION]"}" };

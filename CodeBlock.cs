@@ -5,7 +5,7 @@ using System.Text;
 /// <summary>
 /// BlockForge CodeBlock 
 /// Author: Angus Grewal
-/// Date: Mar 4 2026
+/// Date: Apr 7 2026
 /// Source: Self-written, with AI coaching. All code submitted is human written, based on ChatGPT guidance.
 /// </summary>
 namespace COMP_3951_BlockForge_TechPro
@@ -43,7 +43,6 @@ namespace COMP_3951_BlockForge_TechPro
 
         public CodeBlockType BlockType { get; set; }
         public string? BlockName { get; set; }
-        public VariableBlockType? VariableType { get; set; }
 
         /// <summary>
         /// Constructor for a CodeBlock.
@@ -60,8 +59,7 @@ namespace COMP_3951_BlockForge_TechPro
             int gridColumn = 0,
             int gridRow = 0,
             CodeBlockType blockType = CodeBlockType.Unknown,
-            string? blockName = null,
-            VariableBlockType? variableType = null)
+            string? blockName = null)
         {
             this.PosX = posX;
             this.PosY = posY;
@@ -70,7 +68,6 @@ namespace COMP_3951_BlockForge_TechPro
             this.GridRow = gridRow;
             this.BlockType = blockType;
             this.BlockName = blockName;
-            this.VariableType = variableType;
         }
 
         /// <summary>
@@ -102,11 +99,10 @@ namespace COMP_3951_BlockForge_TechPro
         /// <param name="blockType">The block type to store.</param>
         /// <param name="blockName">The display name of the block.</param>
         /// <param name="variableType">The variable type when the block represents a variable.</param>
-        public void UpdateBlockMetadata(CodeBlockType blockType, string? blockName = null, VariableBlockType? variableType = null)
+        public void UpdateBlockMetadata(CodeBlockType blockType, string? blockName = null)
         {
             this.BlockType = blockType;
             this.BlockName = blockName;
-            this.VariableType = variableType;
         }
     }
 }

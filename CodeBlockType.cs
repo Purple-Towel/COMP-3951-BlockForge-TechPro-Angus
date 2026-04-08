@@ -5,13 +5,9 @@ namespace COMP_3951_BlockForge_TechPro
         Unknown,
         Start,
         End,
+        Do,
         If,
         Then,
-        Else,
-        While,
-        Run,
-        Print,
-        Equals,
-        Variable
+        Else
     }
 }
