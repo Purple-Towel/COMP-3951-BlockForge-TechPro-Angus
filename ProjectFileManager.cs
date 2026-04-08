@@ -98,16 +98,16 @@ namespace COMP_3951_BlockForge_TechPro
         /// <exception cref="ArgumentException">thrown when there is no filepath to write to.</exception>
         public void OutputCode(Project project, string filepath)
         {
+            if (project == null)
+            {
+                throw new ArgumentNullException(nameof(project));
+            }
+
             List<string> errors = CodeBlockValidator.Validate(project.CodeBlocks);
             if (errors.Count > 0)
             {
                 string message = "Validation failed:\n" + string.Join("\n", errors);
                 throw new InvalidOperationException(message);
-            }
-
-            if (project == null)
-            {
-                throw new ArgumentNullException(nameof(project));
             }
 
             if (string.IsNullOrWhiteSpace(filepath))

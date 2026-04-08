@@ -57,6 +57,7 @@ namespace COMP_3951_BlockForge_TechPro
             this.PosX = posX;
             this.PosY = posY;
             this.Uid = uid;
+            this.Sequence = sequence;
             this.BlockType = blockType;
             this.BlockName = blockName;
         }
