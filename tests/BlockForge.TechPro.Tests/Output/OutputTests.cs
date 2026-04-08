@@ -19,16 +19,16 @@ public class OutputTests
 
         List<CodeBlock> blocks = new List<CodeBlock>
             {
-                new CodeBlock(0, 0, "b1", 0, 0, CodeBlockType.Start, ""),
-                new CodeBlock(0, 0, "b2", 0, 1, CodeBlockType.If, "X <= Y"),
-                new CodeBlock(0, 0, "b3", 0, 2, CodeBlockType.Then, "PRINT \"Hello World\""),
-                new CodeBlock(0, 0, "b4", 0, 3, CodeBlockType.Else, "PRINT \"Goodbye!\""),
-                new CodeBlock(0, 0, "b5", 0, 4, CodeBlockType.End, "")
+                new CodeBlock(0, 0, "b1", 0, CodeBlockType.Start, ""),
+                new CodeBlock(0, 0, "b2", 1, CodeBlockType.If, "X <= Y"),
+                new CodeBlock(0, 0, "b3", 2, CodeBlockType.Then, "PRINT \"Hello World\""),
+                new CodeBlock(0, 0, "b4", 3, CodeBlockType.Else, "PRINT \"Goodbye!\""),
+                new CodeBlock(0, 0, "b5", 4, CodeBlockType.End, "")
             };
 
 
         Project project = new Project("Test", blocks);
-        string filepath = "output.txt";
+        string filepath = "output1.txt";
 
         if (File.Exists(filepath))
         {
@@ -48,16 +48,16 @@ public class OutputTests
 
         List<CodeBlock> blocks = new List<CodeBlock>
             {
-                new CodeBlock(0, 0, "b1", 0, 0, CodeBlockType.Start, ""),
-                new CodeBlock(0, 0, "b2", 0, 1, CodeBlockType.If, "X <= Y"),
-                new CodeBlock(0, 0, "b3", 0, 2, CodeBlockType.Then, "PRINT \"Hello World\""),
-                new CodeBlock(0, 0, "b4", 0, 3, CodeBlockType.Else, "PRINT \"Goodbye!\""),
-                new CodeBlock(0, 0, "b5", 0, 4, CodeBlockType.End, "")
+                new CodeBlock(0, 0, "b1", 0, CodeBlockType.Start, ""),
+                new CodeBlock(0, 0, "b2", 1, CodeBlockType.If, "X <= Y"),
+                new CodeBlock(0, 0, "b3", 2, CodeBlockType.Then, "PRINT \"Hello World\""),
+                new CodeBlock(0, 0, "b4", 3, CodeBlockType.Else, "PRINT \"Goodbye!\""),
+                new CodeBlock(0, 0, "b5", 4, CodeBlockType.End, "")
             };
 
 
         Project project = new Project("Test", blocks);
-        string filepath = "output.txt";
+        string filepath = "output2.txt";
 
         if (File.Exists(filepath))
         {
@@ -71,6 +71,6 @@ public class OutputTests
 
         Assert.AreEqual(expected, actual);
 
-        //File.Delete(filepath);
+        File.Delete(filepath);
     }
 }
