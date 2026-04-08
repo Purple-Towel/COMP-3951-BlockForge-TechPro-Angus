@@ -5,7 +5,7 @@ using System.Text;
 /// <summary>
 /// BlockForge ProjectFileManager 
 /// Author: Angus Grewal
-/// Date: Mar 25 2026
+/// Date: Apr 7 2026
 /// Source: Self-written, with AI coaching. All code submitted is human written, based on ChatGPT guidance.
 /// </summary>
 namespace COMP_3951_BlockForge_TechPro
@@ -87,6 +87,39 @@ namespace COMP_3951_BlockForge_TechPro
             }
 
             return project;
+        }
+
+        /// <summary>
+        /// From project, output code. For now, uses PseudoCodeGenerator.
+        /// </summary>
+        /// <param name="project">The project to generate output code from.</param>
+        /// <param name="filepath">the file to write to.</param>
+        /// <exception cref="ArgumentNullException">thrown when a project is null.</exception>
+        /// <exception cref="ArgumentException">thrown when there is no filepath to write to.</exception>
+        public void OutputCode(Project project, string filepath)
+        {
+            List<string> errors = CodeBlockValidator.Validate(project.CodeBlocks);
+            if (errors.Count > 0)
+            {
+                string message = "Validation failed:\n" + string.Join("\n", errors);
+                throw new InvalidOperationException(message);
+            }
+
+            if (project == null)
+            {
+                throw new ArgumentNullException(nameof(project));
+            }
+
+            if (string.IsNullOrWhiteSpace(filepath))
+            {
+                throw new ArgumentException("Filepath can't be null or empty.", nameof(filepath));
+            }
+
+
+            PseudoCodeGenerator generator = new PseudoCodeGenerator();
+            string output = generator.Generate(project);
+
+            File.WriteAllText(filepath, output);
         }
     }
 }
