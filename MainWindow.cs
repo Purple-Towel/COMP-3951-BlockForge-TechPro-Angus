@@ -29,9 +29,21 @@ namespace COMP_3951_BlockForge_TechPro
             RefreshBlockList();
         }
 
+        private void ClearBlockInput()
+        {
+            textBoxBlockName.Text = string.Empty;
+            numericUpDownSequence.Value = 0;
+            comboBoxBlockType.SelectedItem = CodeBlockType.Start;
+        }
+
         private void RefreshBlockList()
         {
+            listBlocks.Items.Clear();
 
+            foreach (CodeBlock block in _currentProject.CodeBlocks.OrderBy(b => b.Sequence))
+            {
+                listBlocks.Items.Add(block);
+            }
         }
     }
 }
