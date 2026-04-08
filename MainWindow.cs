@@ -10,9 +10,16 @@ namespace COMP_3951_BlockForge_TechPro
 {
     public partial class MainWindow : Form
     {
+        private Project _currentProject;
+        private readonly PayloadTransformer _payloadTransformer;
+        private readonly ProjectFileManager _projectFileManager;
+
         public MainWindow()
         {
             InitializeComponent();
+            _payloadTransformer = new PayloadTransformer(3);
+            _projectFileManager = new ProjectFileManager(_payloadTransformer);
+            _currentProject = new Project("Untitled", new List<CodeBlock>());
         }
     }
 }
