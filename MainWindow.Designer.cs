@@ -41,12 +41,9 @@
             labelList = new Label();
             textBoxBlockName = new TextBox();
             labelBlockName = new Label();
-            label1 = new Label();
-            numericUpDownSequence = new NumericUpDown();
             buttonAdd = new Button();
             buttonRemoveLast = new Button();
             menuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownSequence).BeginInit();
             SuspendLayout();
             // 
             // menuStrip
@@ -68,19 +65,19 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Size = new Size(152, 22);
             saveToolStripMenuItem.Text = "Save";
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Size = new Size(152, 22);
             openToolStripMenuItem.Text = "Open";
             // 
             // generateCodeToolStripMenuItem
             // 
             generateCodeToolStripMenuItem.Name = "generateCodeToolStripMenuItem";
-            generateCodeToolStripMenuItem.Size = new Size(180, 22);
+            generateCodeToolStripMenuItem.Size = new Size(152, 22);
             generateCodeToolStripMenuItem.Text = "Generate Code";
             // 
             // textProjectName
@@ -150,23 +147,6 @@
             labelBlockName.TabIndex = 8;
             labelBlockName.Text = "Block Name/Data:";
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(406, 28);
-            label1.Name = "label1";
-            label1.Size = new Size(61, 15);
-            label1.TabIndex = 9;
-            label1.Text = "Sequence:";
-            // 
-            // numericUpDownSequence
-            // 
-            numericUpDownSequence.Location = new Point(406, 46);
-            numericUpDownSequence.Maximum = new decimal(new int[] { 63, 0, 0, 0 });
-            numericUpDownSequence.Name = "numericUpDownSequence";
-            numericUpDownSequence.Size = new Size(120, 23);
-            numericUpDownSequence.TabIndex = 10;
-            // 
             // buttonAdd
             // 
             buttonAdd.Location = new Point(558, 46);
@@ -175,6 +155,7 @@
             buttonAdd.TabIndex = 11;
             buttonAdd.Text = "Add Block";
             buttonAdd.UseVisualStyleBackColor = true;
+            buttonAdd.Click += buttonAdd_Click;
             // 
             // buttonRemoveLast
             // 
@@ -184,6 +165,7 @@
             buttonRemoveLast.TabIndex = 12;
             buttonRemoveLast.Text = "Remove Last Block";
             buttonRemoveLast.UseVisualStyleBackColor = true;
+            buttonRemoveLast.Click += buttonRemoveLast_Click;
             // 
             // MainWindow
             // 
@@ -192,8 +174,6 @@
             ClientSize = new Size(800, 450);
             Controls.Add(buttonRemoveLast);
             Controls.Add(buttonAdd);
-            Controls.Add(numericUpDownSequence);
-            Controls.Add(label1);
             Controls.Add(labelBlockName);
             Controls.Add(textBoxBlockName);
             Controls.Add(labelList);
@@ -208,7 +188,6 @@
             Text = "MainWindow";
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownSequence).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -228,8 +207,6 @@
         private Label labelList;
         private TextBox textBoxBlockName;
         private Label labelBlockName;
-        private Label label1;
-        private NumericUpDown numericUpDownSequence;
         private Button buttonAdd;
         private Button buttonRemoveLast;
     }
