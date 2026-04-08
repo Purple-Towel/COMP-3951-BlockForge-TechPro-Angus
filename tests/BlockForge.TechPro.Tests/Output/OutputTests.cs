@@ -28,7 +28,7 @@ public class OutputTests
 
 
         Project project = new Project("Test", blocks);
-        string filepath = "output.txt";
+        string filepath = "output1.txt";
 
         if (File.Exists(filepath))
         {
@@ -57,7 +57,7 @@ public class OutputTests
 
 
         Project project = new Project("Test", blocks);
-        string filepath = "output.txt";
+        string filepath = "output2.txt";
 
         if (File.Exists(filepath))
         {
@@ -71,6 +71,6 @@ public class OutputTests
 
         Assert.AreEqual(expected, actual);
 
-        //File.Delete(filepath);
+        File.Delete(filepath);
     }
 }
