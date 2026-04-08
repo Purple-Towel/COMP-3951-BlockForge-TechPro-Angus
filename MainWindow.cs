@@ -20,6 +20,18 @@ namespace COMP_3951_BlockForge_TechPro
             _payloadTransformer = new PayloadTransformer(3);
             _projectFileManager = new ProjectFileManager(_payloadTransformer);
             _currentProject = new Project("Untitled", new List<CodeBlock>());
+
+            textProjectName.Text = _currentProject.ProjectName;
+            numericUpDownSequence.Value = 0;
+            comboBoxBlockType.DataSource = Enum.GetValues(typeof(CodeBlockType));
+            comboBoxBlockType.SelectedItem = CodeBlockType.Start;
+
+            RefreshBlockList();
+        }
+
+        private void RefreshBlockList()
+        {
+
         }
     }
 }

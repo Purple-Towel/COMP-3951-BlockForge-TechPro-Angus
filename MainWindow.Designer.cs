@@ -28,12 +28,209 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "MainWindow";
+            menuStrip = new MenuStrip();
+            fileToolStripMenuItem = new ToolStripMenuItem();
+            saveToolStripMenuItem = new ToolStripMenuItem();
+            openToolStripMenuItem = new ToolStripMenuItem();
+            generateCodeToolStripMenuItem = new ToolStripMenuItem();
+            textProjectName = new TextBox();
+            labelProjectName = new Label();
+            listBlocks = new ListBox();
+            comboBoxBlockType = new ComboBox();
+            labelBlockType = new Label();
+            labelList = new Label();
+            textBoxBlockName = new TextBox();
+            labelBlockName = new Label();
+            label1 = new Label();
+            numericUpDownSequence = new NumericUpDown();
+            buttonAdd = new Button();
+            buttonRemoveLast = new Button();
+            menuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownSequence).BeginInit();
+            SuspendLayout();
+            // 
+            // menuStrip
+            // 
+            menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem });
+            menuStrip.Location = new Point(0, 0);
+            menuStrip.Name = "menuStrip";
+            menuStrip.Size = new Size(800, 24);
+            menuStrip.TabIndex = 0;
+            menuStrip.Text = "menuStrip";
+            // 
+            // fileToolStripMenuItem
+            // 
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, openToolStripMenuItem, generateCodeToolStripMenuItem });
+            fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            fileToolStripMenuItem.Size = new Size(37, 20);
+            fileToolStripMenuItem.Text = "File";
+            // 
+            // saveToolStripMenuItem
+            // 
+            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Text = "Save";
+            // 
+            // openToolStripMenuItem
+            // 
+            openToolStripMenuItem.Name = "openToolStripMenuItem";
+            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Text = "Open";
+            // 
+            // generateCodeToolStripMenuItem
+            // 
+            generateCodeToolStripMenuItem.Name = "generateCodeToolStripMenuItem";
+            generateCodeToolStripMenuItem.Size = new Size(180, 22);
+            generateCodeToolStripMenuItem.Text = "Generate Code";
+            // 
+            // textProjectName
+            // 
+            textProjectName.Location = new Point(12, 46);
+            textProjectName.Name = "textProjectName";
+            textProjectName.Size = new Size(100, 23);
+            textProjectName.TabIndex = 1;
+            // 
+            // labelProjectName
+            // 
+            labelProjectName.AutoSize = true;
+            labelProjectName.Location = new Point(12, 28);
+            labelProjectName.Name = "labelProjectName";
+            labelProjectName.Size = new Size(82, 15);
+            labelProjectName.TabIndex = 2;
+            labelProjectName.Text = "Project Name:";
+            // 
+            // listBlocks
+            // 
+            listBlocks.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            listBlocks.FormattingEnabled = true;
+            listBlocks.Location = new Point(12, 97);
+            listBlocks.Name = "listBlocks";
+            listBlocks.Size = new Size(776, 334);
+            listBlocks.TabIndex = 3;
+            // 
+            // comboBoxBlockType
+            // 
+            comboBoxBlockType.FormattingEnabled = true;
+            comboBoxBlockType.Location = new Point(135, 46);
+            comboBoxBlockType.Name = "comboBoxBlockType";
+            comboBoxBlockType.Size = new Size(121, 23);
+            comboBoxBlockType.TabIndex = 4;
+            // 
+            // labelBlockType
+            // 
+            labelBlockType.AutoSize = true;
+            labelBlockType.Location = new Point(135, 28);
+            labelBlockType.Name = "labelBlockType";
+            labelBlockType.Size = new Size(66, 15);
+            labelBlockType.TabIndex = 5;
+            labelBlockType.Text = "Block Type:";
+            // 
+            // labelList
+            // 
+            labelList.AutoSize = true;
+            labelList.Location = new Point(12, 79);
+            labelList.Name = "labelList";
+            labelList.Size = new Size(143, 15);
+            labelList.TabIndex = 6;
+            labelList.Text = "Blocks (Execution Order): ";
+            // 
+            // textBoxBlockName
+            // 
+            textBoxBlockName.Location = new Point(281, 46);
+            textBoxBlockName.Name = "textBoxBlockName";
+            textBoxBlockName.Size = new Size(100, 23);
+            textBoxBlockName.TabIndex = 7;
+            // 
+            // labelBlockName
+            // 
+            labelBlockName.AutoSize = true;
+            labelBlockName.Location = new Point(281, 28);
+            labelBlockName.Name = "labelBlockName";
+            labelBlockName.Size = new Size(103, 15);
+            labelBlockName.TabIndex = 8;
+            labelBlockName.Text = "Block Name/Data:";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(406, 28);
+            label1.Name = "label1";
+            label1.Size = new Size(61, 15);
+            label1.TabIndex = 9;
+            label1.Text = "Sequence:";
+            // 
+            // numericUpDownSequence
+            // 
+            numericUpDownSequence.Location = new Point(406, 46);
+            numericUpDownSequence.Maximum = new decimal(new int[] { 63, 0, 0, 0 });
+            numericUpDownSequence.Name = "numericUpDownSequence";
+            numericUpDownSequence.Size = new Size(120, 23);
+            numericUpDownSequence.TabIndex = 10;
+            // 
+            // buttonAdd
+            // 
+            buttonAdd.Location = new Point(558, 46);
+            buttonAdd.Name = "buttonAdd";
+            buttonAdd.Size = new Size(75, 23);
+            buttonAdd.TabIndex = 11;
+            buttonAdd.Text = "Add Block";
+            buttonAdd.UseVisualStyleBackColor = true;
+            // 
+            // buttonRemoveLast
+            // 
+            buttonRemoveLast.Location = new Point(639, 46);
+            buttonRemoveLast.Name = "buttonRemoveLast";
+            buttonRemoveLast.Size = new Size(149, 23);
+            buttonRemoveLast.TabIndex = 12;
+            buttonRemoveLast.Text = "Remove Last Block";
+            buttonRemoveLast.UseVisualStyleBackColor = true;
+            // 
+            // MainWindow
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(buttonRemoveLast);
+            Controls.Add(buttonAdd);
+            Controls.Add(numericUpDownSequence);
+            Controls.Add(label1);
+            Controls.Add(labelBlockName);
+            Controls.Add(textBoxBlockName);
+            Controls.Add(labelList);
+            Controls.Add(labelBlockType);
+            Controls.Add(comboBoxBlockType);
+            Controls.Add(listBlocks);
+            Controls.Add(labelProjectName);
+            Controls.Add(textProjectName);
+            Controls.Add(menuStrip);
+            MainMenuStrip = menuStrip;
+            Name = "MainWindow";
+            Text = "MainWindow";
+            menuStrip.ResumeLayout(false);
+            menuStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownSequence).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private MenuStrip menuStrip;
+        private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem saveToolStripMenuItem;
+        private ToolStripMenuItem openToolStripMenuItem;
+        private ToolStripMenuItem generateCodeToolStripMenuItem;
+        private TextBox textProjectName;
+        private Label labelProjectName;
+        private ListBox listBlocks;
+        private ComboBox comboBoxBlockType;
+        private Label labelBlockType;
+        private Label labelList;
+        private TextBox textBoxBlockName;
+        private Label labelBlockName;
+        private Label label1;
+        private NumericUpDown numericUpDownSequence;
+        private Button buttonAdd;
+        private Button buttonRemoveLast;
     }
 }
