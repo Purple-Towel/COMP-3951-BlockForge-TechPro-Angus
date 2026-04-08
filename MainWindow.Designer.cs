@@ -65,20 +65,23 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(152, 22);
+            saveToolStripMenuItem.Size = new Size(180, 22);
             saveToolStripMenuItem.Text = "Save";
+            saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(152, 22);
+            openToolStripMenuItem.Size = new Size(180, 22);
             openToolStripMenuItem.Text = "Open";
+            openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
             // generateCodeToolStripMenuItem
             // 
             generateCodeToolStripMenuItem.Name = "generateCodeToolStripMenuItem";
-            generateCodeToolStripMenuItem.Size = new Size(152, 22);
+            generateCodeToolStripMenuItem.Size = new Size(180, 22);
             generateCodeToolStripMenuItem.Text = "Generate Code";
+            generateCodeToolStripMenuItem.Click += generateCodeToolStripMenuItem_Click;
             // 
             // textProjectName
             // 
