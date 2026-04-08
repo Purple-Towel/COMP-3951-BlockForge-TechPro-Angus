@@ -69,7 +69,7 @@ namespace COMP_3951_BlockForge_TechPro
                 throw new ArgumentNullException(nameof(project));
             }
 
-            var blocks = project.CodeBlocks.OrderBy(b => b.GridRow).ThenBy(b => b.GridColumn).ToList();
+            var blocks = project.CodeBlocks.OrderBy(b => b.Sequence).ToList();
 
             List<string> lines = new List<string>();
 

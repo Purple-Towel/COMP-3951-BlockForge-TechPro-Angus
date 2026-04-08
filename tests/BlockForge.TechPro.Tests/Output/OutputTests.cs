@@ -19,11 +19,11 @@ public class OutputTests
 
         List<CodeBlock> blocks = new List<CodeBlock>
             {
-                new CodeBlock(0, 0, "b1", 0, 0, CodeBlockType.Start, ""),
-                new CodeBlock(0, 0, "b2", 0, 1, CodeBlockType.If, "X <= Y"),
-                new CodeBlock(0, 0, "b3", 0, 2, CodeBlockType.Then, "PRINT \"Hello World\""),
-                new CodeBlock(0, 0, "b4", 0, 3, CodeBlockType.Else, "PRINT \"Goodbye!\""),
-                new CodeBlock(0, 0, "b5", 0, 4, CodeBlockType.End, "")
+                new CodeBlock(0, 0, "b1", 0, CodeBlockType.Start, ""),
+                new CodeBlock(0, 0, "b2", 1, CodeBlockType.If, "X <= Y"),
+                new CodeBlock(0, 0, "b3", 2, CodeBlockType.Then, "PRINT \"Hello World\""),
+                new CodeBlock(0, 0, "b4", 3, CodeBlockType.Else, "PRINT \"Goodbye!\""),
+                new CodeBlock(0, 0, "b5", 4, CodeBlockType.End, "")
             };
 
 
@@ -48,11 +48,11 @@ public class OutputTests
 
         List<CodeBlock> blocks = new List<CodeBlock>
             {
-                new CodeBlock(0, 0, "b1", 0, 0, CodeBlockType.Start, ""),
-                new CodeBlock(0, 0, "b2", 0, 1, CodeBlockType.If, "X <= Y"),
-                new CodeBlock(0, 0, "b3", 0, 2, CodeBlockType.Then, "PRINT \"Hello World\""),
-                new CodeBlock(0, 0, "b4", 0, 3, CodeBlockType.Else, "PRINT \"Goodbye!\""),
-                new CodeBlock(0, 0, "b5", 0, 4, CodeBlockType.End, "")
+                new CodeBlock(0, 0, "b1", 0, CodeBlockType.Start, ""),
+                new CodeBlock(0, 0, "b2", 1, CodeBlockType.If, "X <= Y"),
+                new CodeBlock(0, 0, "b3", 2, CodeBlockType.Then, "PRINT \"Hello World\""),
+                new CodeBlock(0, 0, "b4", 3, CodeBlockType.Else, "PRINT \"Goodbye!\""),
+                new CodeBlock(0, 0, "b5", 4, CodeBlockType.End, "")
             };
 
 

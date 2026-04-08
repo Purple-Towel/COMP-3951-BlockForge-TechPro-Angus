@@ -27,19 +27,14 @@ namespace COMP_3951_BlockForge_TechPro
         public double PosY { get; set; }
 
         /// <summary>
-        /// Gets or sets the occupied grid column for the block.
-        /// </summary>
-        public int GridColumn { get; set; }
-
-        /// <summary>
-        /// Gets or sets the occupied grid row for the block.
-        /// </summary>
-        public int GridRow { get; set; }
-
-        /// <summary>
         /// Gets or sets the unique identifier for the block.
         /// </summary>
         public string Uid { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sequence number for execution order.
+        /// </summary>
+        public int Sequence { get; set; }
 
         public CodeBlockType BlockType { get; set; }
         public string? BlockName { get; set; }
@@ -50,22 +45,18 @@ namespace COMP_3951_BlockForge_TechPro
         /// <param name="posX">starting X coordinate to place from.</param>
         /// <param name="posY">starting Y coordinate to place from.</param>
         /// <param name="uid">unique identifier for an instance of CodeBlock. Uniqueness will be enforced elsewhere, for now the CodeBlockValidator will log duplicates.</param>
-        /// <param name="gridColumn">The occupied grid column.</param>
-        /// <param name="gridRow">The occupied grid row.</param>
+        /// <param name="sequence">The sequence number that will determine liner execution (from 0 to n).</param>
         public CodeBlock(
             double posX,
             double posY,
             String uid,
-            int gridColumn = 0,
-            int gridRow = 0,
+            int sequence = 0,
             CodeBlockType blockType = CodeBlockType.Unknown,
             string? blockName = null)
         {
             this.PosX = posX;
             this.PosY = posY;
             this.Uid = uid;
-            this.GridColumn = gridColumn;
-            this.GridRow = gridRow;
             this.BlockType = blockType;
             this.BlockName = blockName;
         }
@@ -83,22 +74,10 @@ namespace COMP_3951_BlockForge_TechPro
         }
 
         /// <summary>
-        /// Updates the stored grid position for the block.
-        /// </summary>
-        /// <param name="gridColumn">occupied grid column.</param>
-        /// <param name="gridRow">occupied grid row.</param>
-        public void UpdateGridPosition(int gridColumn, int gridRow)
-        {
-            this.GridColumn = gridColumn;
-            this.GridRow = gridRow;
-        }
-
-        /// <summary>
         /// Updates the metadata associated with the block.
         /// </summary>
         /// <param name="blockType">The block type to store.</param>
         /// <param name="blockName">The display name of the block.</param>
-        /// <param name="variableType">The variable type when the block represents a variable.</param>
         public void UpdateBlockMetadata(CodeBlockType blockType, string? blockName = null)
         {
             this.BlockType = blockType;
