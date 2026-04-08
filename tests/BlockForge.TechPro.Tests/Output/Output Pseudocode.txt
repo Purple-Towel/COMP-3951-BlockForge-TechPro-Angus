@@ -1,7 +1,7 @@
-﻿IF X <= Y
-	THEN
-		PRINT "Hello World"
-	ELSE
-		PRINT "Goodbye!"
-	END
+﻿BEGIN
+IF X <= Y
+    THEN
+        PRINT "Hello World"
+    ELSE
+        PRINT "Goodbye!"
 END
