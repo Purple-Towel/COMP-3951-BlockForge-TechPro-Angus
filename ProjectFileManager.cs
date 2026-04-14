@@ -36,6 +36,7 @@ namespace COMP_3951_BlockForge_TechPro
         /// <param name="project">project to save.</param>
         /// <exception cref="InvalidOperationException">thrown when CodeBlocks fail to validate.</exception>
         /// <exception cref="InvalidDataException">thrown if the project is attempted to be saved without a proper name.</exception>
+        /// <exception cref="ArgumentException">thrown if the filepath supplied is empty.</exception>
         public void SaveFile(Project project, string filepath)
         {
             List<string> errors = CodeBlockValidator.Validate(project.CodeBlocks);

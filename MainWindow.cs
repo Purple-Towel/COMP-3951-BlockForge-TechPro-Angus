@@ -7,8 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+/// <summary>
+/// BlockForge MainWindow
+/// Author: Angus Grewal
+/// Date: Apr 14 2026
+/// Source: Self-written, with AI coaching. All code submitted is human written, based on ChatGPT guidance.
+/// </summary>
 namespace COMP_3951_BlockForge_TechPro
 {
+    /// <summary>
+    /// Main window of the BlockForge program.
+    /// </summary>
     public partial class MainWindow : Form
     {
         private int _sequenceTracker;
@@ -16,6 +25,9 @@ namespace COMP_3951_BlockForge_TechPro
         private readonly PayloadTransformer _payloadTransformer;
         private readonly ProjectFileManager _projectFileManager;
 
+        /// <summary>
+        /// Constructor that will instantiate the main window.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -31,12 +43,18 @@ namespace COMP_3951_BlockForge_TechPro
             RefreshBlockList();
         }
 
+        /// <summary>
+        /// Helper function that will clear input fields for Blocks.
+        /// </summary>
         private void ClearBlockInput()
         {
             textBoxBlockName.Text = string.Empty;
             comboBoxBlockType.SelectedItem = CodeBlockType.Start;
         }
 
+        /// <summary>
+        /// Helper function that will populate the list of blocks in order by their sequence number.
+        /// </summary>
         private void RefreshBlockList()
         {
             listBlocks.Items.Clear();
@@ -47,6 +65,11 @@ namespace COMP_3951_BlockForge_TechPro
             }
         }
 
+        /// <summary>
+        /// Handler for the add block button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             CodeBlock newBlock = new CodeBlock
@@ -65,6 +88,11 @@ namespace COMP_3951_BlockForge_TechPro
             _sequenceTracker++;
         }
 
+        /// <summary>
+        /// Handler for the remove last block button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonRemoveLast_Click(object sender, EventArgs e)
         {
             if (_currentProject.CodeBlocks.Count == 0)
@@ -80,6 +108,11 @@ namespace COMP_3951_BlockForge_TechPro
             RefreshBlockList();
         }
 
+        /// <summary>
+        /// Handler for the save menu option.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string projectName = textProjectName.Text.Trim();
@@ -110,6 +143,11 @@ namespace COMP_3951_BlockForge_TechPro
             }
         }
 
+        /// <summary>
+        /// Handler for the open menu option.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog open = new OpenFileDialog();
@@ -133,6 +171,11 @@ namespace COMP_3951_BlockForge_TechPro
             }
         }
 
+        /// <summary>
+        /// Handler for the generate menu option.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void generateCodeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog save = new SaveFileDialog();
