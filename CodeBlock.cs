@@ -84,5 +84,17 @@ namespace COMP_3951_BlockForge_TechPro
             this.BlockType = blockType;
             this.BlockName = blockName;
         }
+
+        public override string ToString()
+        {
+            string output = $"{Sequence} | {BlockType}";
+
+            if (!string.IsNullOrWhiteSpace(BlockName))
+            {
+                output += $" | {BlockName}";
+            }
+
+            return output;
+        }
     }
 }

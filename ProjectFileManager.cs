@@ -36,7 +36,8 @@ namespace COMP_3951_BlockForge_TechPro
         /// <param name="project">project to save.</param>
         /// <exception cref="InvalidOperationException">thrown when CodeBlocks fail to validate.</exception>
         /// <exception cref="InvalidDataException">thrown if the project is attempted to be saved without a proper name.</exception>
-        public void SaveFile(Project project)
+        /// <exception cref="ArgumentException">thrown if the filepath supplied is empty.</exception>
+        public void SaveFile(Project project, string filepath)
         {
             List<string> errors = CodeBlockValidator.Validate(project.CodeBlocks);
             if (errors.Count > 0)
@@ -50,11 +51,16 @@ namespace COMP_3951_BlockForge_TechPro
                 throw new InvalidDataException("Project name cannot be null when saving.");
             }
 
+            if (string.IsNullOrWhiteSpace(filepath))
+            {
+                throw new ArgumentException("Filepath cannot be null/empty when saving", nameof(filepath));
+            }
+
             string json = ProjectSerializer.Serialize(project);
             string scrambled = _transformer.Scramble(json);
             byte[] encoded = Encoding.UTF8.GetBytes(scrambled);
 
-            File.WriteAllBytes(project.ProjectName + ".bfg", encoded);
+            File.WriteAllBytes(filepath, encoded);
         }
 
         /// <summary>
