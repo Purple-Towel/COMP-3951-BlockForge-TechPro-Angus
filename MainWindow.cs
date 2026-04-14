@@ -92,14 +92,21 @@ namespace COMP_3951_BlockForge_TechPro
 
             _currentProject.ProjectName = projectName;
 
-            try
+            SaveFileDialog save = new SaveFileDialog();
+            save.Filter = "BlockForge Project (*.bfg)|*.bfg|All Files (*.*)|*.*";
+            save.FileName = $"{projectName}.bfg";
+
+            if (save.ShowDialog() == DialogResult.OK)
             {
-                _projectFileManager.SaveFile(_currentProject);
-                MessageBox.Show($"Saved {_currentProject.ProjectName} successfully");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Save failed: {ex.Message}");
+                try
+                {
+                    _projectFileManager.SaveFile(_currentProject, save.FileName);
+                    MessageBox.Show($"Saved {_currentProject.ProjectName} successfully");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Save failed: {ex.Message}");
+                }
             }
         }
 

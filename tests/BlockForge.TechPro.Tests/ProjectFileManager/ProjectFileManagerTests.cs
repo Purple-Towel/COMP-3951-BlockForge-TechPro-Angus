@@ -29,7 +29,7 @@ public class ProjectFileManagerTests
 
         try
         {
-            filemanager.SaveFile(project);
+            filemanager.SaveFile(project, filepath);
 
             Project loaded = filemanager.LoadFile(filepath);
 
