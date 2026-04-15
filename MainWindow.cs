@@ -113,7 +113,7 @@ namespace COMP_3951_BlockForge_TechPro
                     0,
                     Guid.NewGuid().ToString(),
                     _sequenceTracker,
-                    (CodeBlockType) comboBoxBlockType.SelectedItem,
+                    (CodeBlockType) comboBoxBlockType.SelectedItem!,
                     textBoxBlockData.Text
                 );
 
@@ -126,7 +126,7 @@ namespace COMP_3951_BlockForge_TechPro
             }
             else
             {
-                _editingBlock.UpdateBlockMetadata((CodeBlockType) comboBoxBlockType.SelectedItem, textBoxBlockData.Text);
+                _editingBlock.UpdateBlockMetadata((CodeBlockType) comboBoxBlockType.SelectedItem!, textBoxBlockData.Text);
                 _editingBlock = null;
                 buttonAdd.Text = "Add Block";
                 buttonEditSelected.Text = "Edit Selected Block";
