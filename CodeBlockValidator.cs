@@ -17,23 +17,81 @@ namespace COMP_3951_BlockForge_TechPro
     /// </summary>
     public class CodeBlockValidator
     {
-        public static List<String> Validate(List<CodeBlock> blocks)
+        public static List<string> Validate(List<CodeBlock> blocks)
         {
-            var errors = new List<String>();
-            var encountered = new HashSet<String>();
-
-            foreach (var block in blocks)
+            List<string> errors = new List<string>();
+            
+            if (!HasBlocks(blocks))
             {
-                if (string.IsNullOrWhiteSpace(block.Uid))
-                {
-                    errors.Add("Block UID is missing.");
-                    continue;
-                }
+                errors.Add("Need at least 1 block.");
+                return errors;
+            }
 
-                if (!encountered.Add(block.Uid))
-                {
-                    errors.Add($"{block.Uid} is a duplicate.");
-                }
+            List<CodeBlock> blocksOrdered = blocks.OrderBy(block => block.Sequence).ToList();
+
+            if (!FirstIsStart(blocksOrdered))
+            {
+                errors.Add("First block must be Start block.");
+            }
+
+            if (!LastIsEnd(blocksOrdered))
+            {
+                errors.Add("Last block must be End block.");
+            }
+           
+            if (!OnlyOneStart(blocksOrdered))
+            {
+                errors.Add("Only one Start block in a project.");
+            }
+
+            if (!OnlyOneEnd(blocksOrdered))
+            {
+                errors.Add("Only one End block in a project.");
+            }
+
+            if (!NoBlocksAfterEnd(blocksOrdered))
+            {
+                errors.Add("End block cannot have blocks after it.");
+            }
+
+            if (!IfFollowedByThen(blocksOrdered))
+            {
+                errors.Add("An If block must be followed by a Then block.");
+            }
+
+            if (!ThenFollowsIf(blocksOrdered))
+            {
+                errors.Add("A Then block must follow an If block.");
+            }
+
+            if (!ElseFollowsThen(blocksOrdered))
+            {
+                errors.Add("An Else block must follow a Then block.");
+            }
+
+            if (!AllBlocksHaveUid(blocksOrdered))
+            {
+                errors.Add("Not all blocks have a valid UID.");
+            }
+
+            if (!UniqueUids(blocksOrdered))
+            {
+                errors.Add("Block UIDs are not unique.");
+            }
+
+            if (!UniqueSequences(blocksOrdered))
+            {
+                errors.Add("Block Sequence numbers are not unique.");
+            }
+
+            if (!RequiredTextBlocksHaveText(blocksOrdered))
+            {
+                errors.Add("A block requires additional text.");
+            }
+
+            if (!NoUnknownBlocks(blocksOrdered))
+            {
+                errors.Add("An Unknown block type is present.");
             }
 
             return errors;
