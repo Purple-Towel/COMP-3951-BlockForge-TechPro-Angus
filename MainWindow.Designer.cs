@@ -49,6 +49,7 @@
             buttonEditSelected = new Button();
             groupBoxSelected = new GroupBox();
             groupBoxAddBlock = new GroupBox();
+            buttonValidate = new Button();
             menuStrip.SuspendLayout();
             groupBoxSelected.SuspendLayout();
             groupBoxAddBlock.SuspendLayout();
@@ -245,11 +246,22 @@
             groupBoxAddBlock.TabStop = false;
             groupBoxAddBlock.Text = "Add/Update Blocks";
             // 
+            // buttonValidate
+            // 
+            buttonValidate.Location = new Point(385, 90);
+            buttonValidate.Name = "buttonValidate";
+            buttonValidate.Size = new Size(75, 53);
+            buttonValidate.TabIndex = 19;
+            buttonValidate.Text = "Check Validation";
+            buttonValidate.UseVisualStyleBackColor = true;
+            buttonValidate.Click += buttonValidate_Click;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(698, 497);
+            Controls.Add(buttonValidate);
             Controls.Add(groupBoxSelected);
             Controls.Add(labelList);
             Controls.Add(listBlocks);
@@ -293,5 +305,6 @@
         private GroupBox groupBoxSelected;
         private GroupBox groupBoxAddBlock;
         private ToolStripMenuItem newStripMenuItem;
+        private Button buttonValidate;
     }
 }

@@ -113,7 +113,7 @@ namespace COMP_3951_BlockForge_TechPro
                     0,
                     Guid.NewGuid().ToString(),
                     _sequenceTracker,
-                    (CodeBlockType) comboBoxBlockType.SelectedItem!,
+                    (CodeBlockType)comboBoxBlockType.SelectedItem!,
                     textBoxBlockData.Text
                 );
 
@@ -126,7 +126,7 @@ namespace COMP_3951_BlockForge_TechPro
             }
             else
             {
-                _editingBlock.UpdateBlockMetadata((CodeBlockType) comboBoxBlockType.SelectedItem!, textBoxBlockData.Text);
+                _editingBlock.UpdateBlockMetadata((CodeBlockType)comboBoxBlockType.SelectedItem!, textBoxBlockData.Text);
                 _editingBlock = null;
                 buttonAdd.Text = "Add Block";
                 buttonEditSelected.Text = "Edit Selected Block";
@@ -406,6 +406,25 @@ namespace COMP_3951_BlockForge_TechPro
                 ClearBlockInput();
                 ReleaseSelection();
                 listBlocks.Enabled = true;
+            }
+        }
+
+        /// <summary>
+        /// Handler for checking the CodeBlock validation, without needing menus.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonValidate_Click(object sender, EventArgs e)
+        {
+            List<string> errors = CodeBlockValidator.Validate(_currentProject.CodeBlocks);
+            if (errors.Count > 0)
+            {
+                string message = "Validation errors found:\n\n•" + string.Join("\n•", errors);
+                MessageBox.Show(message);
+            } 
+            else
+            {
+                MessageBox.Show("No validation errors found.");
             }
         }
     }
