@@ -138,7 +138,7 @@ namespace COMP_3951_BlockForge_TechPro
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Save failed: {ex.Message}");
+                    MessageBox.Show($"Save failed:\n{ex.Message}");
                 }
             }
         }
@@ -166,7 +166,7 @@ namespace COMP_3951_BlockForge_TechPro
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Open failed: {ex.Message}");
+                    MessageBox.Show($"Open failed:\n{ex.Message}");
                 }
             }
         }
@@ -191,7 +191,7 @@ namespace COMP_3951_BlockForge_TechPro
                 } 
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Code generation failed: {ex.Message}");
+                    MessageBox.Show($"Code generation failed:\n{ex.Message}");
                 }
             }
         }

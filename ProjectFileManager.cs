@@ -5,7 +5,7 @@ using System.Text;
 /// <summary>
 /// BlockForge ProjectFileManager 
 /// Author: Angus Grewal
-/// Date: Apr 7 2026
+/// Date: Apr 14 2026
 /// Source: Self-written, with AI coaching. All code submitted is human written, based on ChatGPT guidance.
 /// </summary>
 namespace COMP_3951_BlockForge_TechPro
@@ -42,7 +42,7 @@ namespace COMP_3951_BlockForge_TechPro
             List<string> errors = CodeBlockValidator.Validate(project.CodeBlocks);
             if (errors.Count > 0)
             {
-                string message = "Validation failed:\n" + string.Join("\n", errors);
+                string message = "Validation failed:\n\n" + string.Join("\n", errors);
                 throw new InvalidOperationException(message);
             }
 
@@ -112,7 +112,7 @@ namespace COMP_3951_BlockForge_TechPro
             List<string> errors = CodeBlockValidator.Validate(project.CodeBlocks);
             if (errors.Count > 0)
             {
-                string message = "Validation failed:\n" + string.Join("\n", errors);
+                string message = "Validation failed:\n\n" + string.Join("\n", errors);
                 throw new InvalidOperationException(message);
             }
 
