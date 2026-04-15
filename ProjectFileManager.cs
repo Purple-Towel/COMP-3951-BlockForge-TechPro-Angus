@@ -42,7 +42,7 @@ namespace COMP_3951_BlockForge_TechPro
             List<string> errors = CodeBlockValidator.Validate(project.CodeBlocks);
             if (errors.Count > 0)
             {
-                string message = "Validation failed:\n\n" + string.Join("\n", errors);
+                string message = "Validation errors:\n\n•" + string.Join("\n•", errors);
                 throw new InvalidOperationException(message);
             }
 
@@ -88,7 +88,7 @@ namespace COMP_3951_BlockForge_TechPro
 
             if (errors.Count > 0)
             {
-                string message = "Validation failed:\n" + string.Join("\n", errors);
+                string message = "Validation errors:\n\n•" + string.Join("\n•", errors);
                 throw new InvalidOperationException(message);
             }
 
@@ -112,7 +112,7 @@ namespace COMP_3951_BlockForge_TechPro
             List<string> errors = CodeBlockValidator.Validate(project.CodeBlocks);
             if (errors.Count > 0)
             {
-                string message = "Validation failed:\n\n" + string.Join("\n", errors);
+                string message = "Validation errors:\n\n•" + string.Join("\n•", errors);
                 throw new InvalidOperationException(message);
             }
 
