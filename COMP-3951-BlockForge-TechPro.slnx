@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="../../../Downloads/logo.ico" />
+  </Folder>
   <Project Path="COMP-3951-BlockForge-TechPro.csproj" />
   <Project Path="tests/BlockForge.TechPro.Tests/BlockForge.TechPro.Tests.csproj" Id="8c4e3c88-8166-4095-bf1b-4f3937787e3b" />
 </Solution>
