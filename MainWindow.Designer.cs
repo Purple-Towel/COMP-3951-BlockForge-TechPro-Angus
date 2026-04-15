@@ -30,6 +30,7 @@
         {
             menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
+            newStripMenuItem = new ToolStripMenuItem();
             saveToolStripMenuItem = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
             generateCodeToolStripMenuItem = new ToolStripMenuItem();
@@ -42,7 +43,6 @@
             textBoxBlockData = new TextBox();
             labelBlockData = new Label();
             buttonAdd = new Button();
-            buttonRemoveLast = new Button();
             buttonRemoveSelected = new Button();
             buttonMoveUp = new Button();
             buttonMoveDown = new Button();
@@ -65,29 +65,36 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, openToolStripMenuItem, generateCodeToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newStripMenuItem, saveToolStripMenuItem, openToolStripMenuItem, generateCodeToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
             // 
+            // newStripMenuItem
+            // 
+            newStripMenuItem.Name = "newStripMenuItem";
+            newStripMenuItem.Size = new Size(180, 22);
+            newStripMenuItem.Text = "New";
+            newStripMenuItem.Click += newStripMenuItem_Click;
+            // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(152, 22);
+            saveToolStripMenuItem.Size = new Size(180, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(152, 22);
+            openToolStripMenuItem.Size = new Size(180, 22);
             openToolStripMenuItem.Text = "Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
             // generateCodeToolStripMenuItem
             // 
             generateCodeToolStripMenuItem.Name = "generateCodeToolStripMenuItem";
-            generateCodeToolStripMenuItem.Size = new Size(152, 22);
+            generateCodeToolStripMenuItem.Size = new Size(180, 22);
             generateCodeToolStripMenuItem.Text = "Generate Code";
             generateCodeToolStripMenuItem.Click += generateCodeToolStripMenuItem_Click;
             // 
@@ -115,6 +122,7 @@
             listBlocks.Name = "listBlocks";
             listBlocks.Size = new Size(674, 304);
             listBlocks.TabIndex = 3;
+            listBlocks.SelectedIndexChanged += listBlocks_SelectedIndexChanged;
             // 
             // comboBoxBlockType
             // 
@@ -168,16 +176,6 @@
             buttonAdd.UseVisualStyleBackColor = true;
             buttonAdd.Click += buttonAdd_Click;
             // 
-            // buttonRemoveLast
-            // 
-            buttonRemoveLast.Location = new Point(320, 37);
-            buttonRemoveLast.Name = "buttonRemoveLast";
-            buttonRemoveLast.Size = new Size(149, 23);
-            buttonRemoveLast.TabIndex = 12;
-            buttonRemoveLast.Text = "Remove Last Block";
-            buttonRemoveLast.UseVisualStyleBackColor = true;
-            buttonRemoveLast.Click += buttonRemoveLast_Click;
-            // 
             // buttonRemoveSelected
             // 
             buttonRemoveSelected.Location = new Point(6, 51);
@@ -224,6 +222,7 @@
             groupBoxSelected.Controls.Add(buttonRemoveSelected);
             groupBoxSelected.Controls.Add(buttonMoveDown);
             groupBoxSelected.Controls.Add(buttonMoveUp);
+            groupBoxSelected.Enabled = false;
             groupBoxSelected.Location = new Point(513, 40);
             groupBoxSelected.Name = "groupBoxSelected";
             groupBoxSelected.Size = new Size(169, 107);
@@ -234,14 +233,13 @@
             // groupBoxAddBlock
             // 
             groupBoxAddBlock.Controls.Add(labelBlockType);
-            groupBoxAddBlock.Controls.Add(buttonRemoveLast);
             groupBoxAddBlock.Controls.Add(comboBoxBlockType);
             groupBoxAddBlock.Controls.Add(buttonAdd);
             groupBoxAddBlock.Controls.Add(textBoxBlockData);
             groupBoxAddBlock.Controls.Add(labelBlockData);
             groupBoxAddBlock.Location = new Point(12, 76);
             groupBoxAddBlock.Name = "groupBoxAddBlock";
-            groupBoxAddBlock.Size = new Size(479, 71);
+            groupBoxAddBlock.Size = new Size(322, 71);
             groupBoxAddBlock.TabIndex = 18;
             groupBoxAddBlock.TabStop = false;
             groupBoxAddBlock.Text = "Add Blocks";
@@ -287,12 +285,12 @@
         private TextBox textBoxBlockData;
         private Label labelBlockData;
         private Button buttonAdd;
-        private Button buttonRemoveLast;
         private Button buttonRemoveSelected;
         private Button buttonMoveUp;
         private Button buttonMoveDown;
         private Button buttonEditSelected;
         private GroupBox groupBoxSelected;
         private GroupBox groupBoxAddBlock;
+        private ToolStripMenuItem newStripMenuItem;
     }
 }

@@ -57,6 +57,31 @@ namespace COMP_3951_BlockForge_TechPro
         }
 
         /// <summary>
+        /// Helper function to manage Selection Controls based on Selection state.
+        /// </summary>
+        private void UpdateSelectionControls()
+        {
+            bool isItemSelected = listBlocks.SelectedIndex != -1;
+
+            groupBoxSelected.Enabled = isItemSelected;
+
+            int index = listBlocks.SelectedIndex;
+            int bottom = listBlocks.Items.Count - 1;
+
+            buttonMoveUp.Enabled = index >= 1;
+            buttonMoveDown.Enabled = isItemSelected && index < bottom;
+        }
+
+        /// <summary>
+        /// Helper function that will release selected block.
+        /// </summary>
+        private void ReleaseSelection()
+        {
+            listBlocks.SelectedIndex = -1;
+            UpdateSelectionControls();
+        }
+
+        /// <summary>
         /// Helper function that will populate the list of blocks in order by their sequence number.
         /// </summary>
         private void RefreshBlockList()
@@ -88,28 +113,24 @@ namespace COMP_3951_BlockForge_TechPro
 
             _currentProject.CodeBlocks.Add(newBlock);
             RefreshBlockList();
+            ReleaseSelection();
             ClearBlockInput();
             _sequenceTracker++;
+            textBoxBlockData.Focus();
         }
 
         /// <summary>
-        /// Handler for the remove last block button.
+        /// Handler for the new menu option.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void buttonRemoveLast_Click(object sender, EventArgs e)
+        private void newStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_currentProject.CodeBlocks.Count == 0)
-            {
-                MessageBox.Show("Block queue empty.");
-                return;
-            }
-
-            CodeBlock lastBlock = _currentProject.CodeBlocks.OrderBy(b => b.Sequence).Last();
-
-            _currentProject.CodeBlocks.Remove(lastBlock);
-            _sequenceTracker--;
+            _currentProject = new Project("New Project", new List<CodeBlock>());
+            _sequenceTracker = 0;
+            textProjectName.Text = "New Project";
             RefreshBlockList();
+            ReleaseSelection();
         }
 
         /// <summary>
@@ -166,6 +187,7 @@ namespace COMP_3951_BlockForge_TechPro
 
                     _sequenceTracker = _currentProject.CodeBlocks.Any() ? _currentProject.CodeBlocks.Max(b => b.Sequence) + 1 : 0;
                     RefreshBlockList();
+                    ReleaseSelection();
                     MessageBox.Show($"Project {_currentProject.ProjectName} opened successfully");
                 }
                 catch (Exception ex)
@@ -200,6 +222,11 @@ namespace COMP_3951_BlockForge_TechPro
             }
         }
 
+        /// <summary>
+        /// Handler for removing the current selected block.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonRemoveSelected_Click(object sender, EventArgs e)
         {
             int index = listBlocks.SelectedIndex;
@@ -230,8 +257,14 @@ namespace COMP_3951_BlockForge_TechPro
             _sequenceTracker = _currentProject.CodeBlocks.Count;
 
             RefreshBlockList();
+            ReleaseSelection();
         }
 
+        /// <summary>
+        /// Handler for moving the selected block upward.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonMoveUp_Click(object sender, EventArgs e)
         {
             int index = listBlocks.SelectedIndex;
@@ -244,7 +277,7 @@ namespace COMP_3951_BlockForge_TechPro
 
             if (index == 0)
             {
-                System.Media.SystemSounds.Asterisk.Play();
+                SystemSounds.Asterisk.Play();
                 return;
             }
 
@@ -263,6 +296,11 @@ namespace COMP_3951_BlockForge_TechPro
             listBlocks.SelectedIndex = index - 1;
         }
 
+        /// <summary>
+        /// Handler for moving the selected block downward.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonMoveDown_Click(object sender, EventArgs e)
         {
             int index = listBlocks.SelectedIndex;
@@ -276,7 +314,7 @@ namespace COMP_3951_BlockForge_TechPro
 
             if (index == bottom)
             {
-                System.Media.SystemSounds.Asterisk.Play();
+                SystemSounds.Asterisk.Play();
                 return;
             }
 
@@ -294,5 +332,16 @@ namespace COMP_3951_BlockForge_TechPro
             RefreshBlockList();
             listBlocks.SelectedIndex = index + 1;
         }
+
+        /// <summary>
+        /// Handler for updating the Selection Control state when selected block state changes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listBlocks_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateSelectionControls();
+        }
+
     }
 }
