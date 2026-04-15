@@ -43,6 +43,7 @@
             labelBlockName = new Label();
             buttonAdd = new Button();
             buttonRemoveLast = new Button();
+            buttonRemoveSelected = new Button();
             menuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -65,21 +66,21 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Size = new Size(152, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Size = new Size(152, 22);
             openToolStripMenuItem.Text = "Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
             // generateCodeToolStripMenuItem
             // 
             generateCodeToolStripMenuItem.Name = "generateCodeToolStripMenuItem";
-            generateCodeToolStripMenuItem.Size = new Size(180, 22);
+            generateCodeToolStripMenuItem.Size = new Size(152, 22);
             generateCodeToolStripMenuItem.Text = "Generate Code";
             generateCodeToolStripMenuItem.Click += generateCodeToolStripMenuItem_Click;
             // 
@@ -152,7 +153,7 @@
             // 
             // buttonAdd
             // 
-            buttonAdd.Location = new Point(558, 46);
+            buttonAdd.Location = new Point(558, 71);
             buttonAdd.Name = "buttonAdd";
             buttonAdd.Size = new Size(75, 23);
             buttonAdd.TabIndex = 11;
@@ -162,7 +163,7 @@
             // 
             // buttonRemoveLast
             // 
-            buttonRemoveLast.Location = new Point(639, 46);
+            buttonRemoveLast.Location = new Point(639, 71);
             buttonRemoveLast.Name = "buttonRemoveLast";
             buttonRemoveLast.Size = new Size(149, 23);
             buttonRemoveLast.TabIndex = 12;
@@ -170,11 +171,22 @@
             buttonRemoveLast.UseVisualStyleBackColor = true;
             buttonRemoveLast.Click += buttonRemoveLast_Click;
             // 
+            // buttonRemoveSelected
+            // 
+            buttonRemoveSelected.Location = new Point(639, 46);
+            buttonRemoveSelected.Name = "buttonRemoveSelected";
+            buttonRemoveSelected.Size = new Size(149, 23);
+            buttonRemoveSelected.TabIndex = 13;
+            buttonRemoveSelected.Text = "Remove Selected Block";
+            buttonRemoveSelected.UseVisualStyleBackColor = true;
+            buttonRemoveSelected.Click += buttonRemoveSelected_Click;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(buttonRemoveSelected);
             Controls.Add(buttonRemoveLast);
             Controls.Add(buttonAdd);
             Controls.Add(labelBlockName);
@@ -212,5 +224,6 @@
         private Label labelBlockName;
         private Button buttonAdd;
         private Button buttonRemoveLast;
+        private Button buttonRemoveSelected;
     }
 }

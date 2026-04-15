@@ -156,7 +156,7 @@ namespace COMP_3951_BlockForge_TechPro
             OpenFileDialog open = new OpenFileDialog();
             open.Filter = "BlockForge Project (*.bfg)|*.bfg|All Files (*.*)|*.*";
 
-            if (open.ShowDialog() == DialogResult.OK )
+            if (open.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
@@ -185,18 +185,50 @@ namespace COMP_3951_BlockForge_TechPro
             save.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
             save.FileName = $"{textProjectName.Text.Trim()}_Output.txt";
 
-            if (save.ShowDialog() == DialogResult.OK )
+            if (save.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
                     _projectFileManager.OutputCode(_currentProject, save.FileName);
                     MessageBox.Show("Pseudocode generated successfully.");
-                } 
+                }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Code generation failed:\n{ex.Message}");
                 }
             }
+        }
+
+        private void buttonRemoveSelected_Click(object sender, EventArgs e)
+        {
+            int index = listBlocks.SelectedIndex;
+            
+            if (index < 0)
+            {
+                MessageBox.Show("No current selection.");
+                return;
+            }
+
+            List<CodeBlock> ordered = _currentProject.CodeBlocks
+                .OrderBy(b => b.Sequence)
+                .ToList();
+
+            CodeBlock selected = ordered[index];
+
+            _currentProject.CodeBlocks.Remove(selected);
+
+            List<CodeBlock> reordered = _currentProject.CodeBlocks
+                .OrderBy(b => b.Sequence)
+                .ToList();
+
+            for (int i = 0; i< reordered.Count; i++)
+            {
+                reordered[i].Sequence = i;
+            }
+
+            _sequenceTracker = _currentProject.CodeBlocks.Count;
+
+            RefreshBlockList();
         }
     }
 }
