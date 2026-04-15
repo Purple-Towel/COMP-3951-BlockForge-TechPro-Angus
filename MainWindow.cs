@@ -37,7 +37,10 @@ namespace COMP_3951_BlockForge_TechPro
 
             textProjectName.Text = _currentProject.ProjectName;
             _sequenceTracker = 0;
-            comboBoxBlockType.DataSource = Enum.GetValues(typeof(CodeBlockType));
+            comboBoxBlockType.DataSource = Enum.GetValues(typeof(CodeBlockType))
+                .Cast<CodeBlockType>()
+                .Where(type => type != CodeBlockType.Unknown)
+                .ToList();
             comboBoxBlockType.SelectedItem = CodeBlockType.Start;
 
             RefreshBlockList();
