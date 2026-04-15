@@ -63,14 +63,17 @@ namespace COMP_3951_BlockForge_TechPro
         private void UpdateSelectionControls()
         {
             bool isItemSelected = listBlocks.SelectedIndex != -1;
+            bool isEditingMode = _editingBlock != null;
 
-            groupBoxSelected.Enabled = isItemSelected;
+            groupBoxSelected.Enabled = isItemSelected || isEditingMode;
 
             int index = listBlocks.SelectedIndex;
             int bottom = listBlocks.Items.Count - 1;
 
-            buttonMoveUp.Enabled = index >= 1;
-            buttonMoveDown.Enabled = isItemSelected && index < bottom;
+            buttonEditSelected.Enabled = isItemSelected || isEditingMode;
+            buttonRemoveSelected.Enabled = isItemSelected && !isEditingMode;
+            buttonMoveUp.Enabled = isItemSelected && !isEditingMode && index >= 1;
+            buttonMoveDown.Enabled = isItemSelected && !isEditingMode && index < bottom;
         }
 
         /// <summary>
@@ -131,6 +134,7 @@ namespace COMP_3951_BlockForge_TechPro
                 ReleaseSelection();
                 ClearBlockInput();
                 textBoxBlockData.Focus();
+                listBlocks.Enabled = true;
             }
         }
 
@@ -387,9 +391,9 @@ namespace COMP_3951_BlockForge_TechPro
 
                 buttonAdd.Text = "Update Block";
                 buttonEditSelected.Text = "Cancel Editing Mode";
-
                 textBoxBlockData.Focus();
-                ReleaseSelection();
+                UpdateSelectionControls();
+                listBlocks.Enabled = false;
             }
             else
             {
@@ -401,6 +405,7 @@ namespace COMP_3951_BlockForge_TechPro
                 textBoxBlockData.Focus();
                 ClearBlockInput();
                 ReleaseSelection();
+                listBlocks.Enabled = true;
             }
         }
     }
