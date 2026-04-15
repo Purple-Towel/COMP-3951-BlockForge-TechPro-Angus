@@ -30,6 +30,7 @@
         {
             menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
+            newStripMenuItem = new ToolStripMenuItem();
             saveToolStripMenuItem = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
             generateCodeToolStripMenuItem = new ToolStripMenuItem();
@@ -39,11 +40,18 @@
             comboBoxBlockType = new ComboBox();
             labelBlockType = new Label();
             labelList = new Label();
-            textBoxBlockName = new TextBox();
-            labelBlockName = new Label();
+            textBoxBlockData = new TextBox();
+            labelBlockData = new Label();
             buttonAdd = new Button();
-            buttonRemoveLast = new Button();
+            buttonRemoveSelected = new Button();
+            buttonMoveUp = new Button();
+            buttonMoveDown = new Button();
+            buttonEditSelected = new Button();
+            groupBoxSelected = new GroupBox();
+            groupBoxAddBlock = new GroupBox();
             menuStrip.SuspendLayout();
+            groupBoxSelected.SuspendLayout();
+            groupBoxAddBlock.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip
@@ -51,49 +59,56 @@
             menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
-            menuStrip.Size = new Size(800, 24);
+            menuStrip.Size = new Size(698, 24);
             menuStrip.TabIndex = 0;
             menuStrip.Text = "menuStrip";
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, openToolStripMenuItem, generateCodeToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newStripMenuItem, saveToolStripMenuItem, openToolStripMenuItem, generateCodeToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
             // 
+            // newStripMenuItem
+            // 
+            newStripMenuItem.Name = "newStripMenuItem";
+            newStripMenuItem.Size = new Size(152, 22);
+            newStripMenuItem.Text = "New";
+            newStripMenuItem.Click += newStripMenuItem_Click;
+            // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Size = new Size(152, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Size = new Size(152, 22);
             openToolStripMenuItem.Text = "Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
             // generateCodeToolStripMenuItem
             // 
             generateCodeToolStripMenuItem.Name = "generateCodeToolStripMenuItem";
-            generateCodeToolStripMenuItem.Size = new Size(180, 22);
+            generateCodeToolStripMenuItem.Size = new Size(152, 22);
             generateCodeToolStripMenuItem.Text = "Generate Code";
             generateCodeToolStripMenuItem.Click += generateCodeToolStripMenuItem_Click;
             // 
             // textProjectName
             // 
-            textProjectName.Location = new Point(12, 46);
+            textProjectName.Location = new Point(18, 44);
             textProjectName.Name = "textProjectName";
-            textProjectName.Size = new Size(100, 23);
+            textProjectName.Size = new Size(463, 23);
             textProjectName.TabIndex = 1;
             // 
             // labelProjectName
             // 
             labelProjectName.AutoSize = true;
-            labelProjectName.Location = new Point(12, 28);
+            labelProjectName.Location = new Point(18, 26);
             labelProjectName.Name = "labelProjectName";
             labelProjectName.Size = new Size(82, 15);
             labelProjectName.TabIndex = 2;
@@ -103,15 +118,16 @@
             // 
             listBlocks.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             listBlocks.FormattingEnabled = true;
-            listBlocks.Location = new Point(12, 97);
+            listBlocks.Location = new Point(12, 172);
             listBlocks.Name = "listBlocks";
-            listBlocks.Size = new Size(776, 334);
+            listBlocks.Size = new Size(674, 304);
             listBlocks.TabIndex = 3;
+            listBlocks.SelectedIndexChanged += listBlocks_SelectedIndexChanged;
             // 
             // comboBoxBlockType
             // 
             comboBoxBlockType.FormattingEnabled = true;
-            comboBoxBlockType.Location = new Point(135, 46);
+            comboBoxBlockType.Location = new Point(6, 37);
             comboBoxBlockType.Name = "comboBoxBlockType";
             comboBoxBlockType.Size = new Size(121, 23);
             comboBoxBlockType.TabIndex = 4;
@@ -119,7 +135,7 @@
             // labelBlockType
             // 
             labelBlockType.AutoSize = true;
-            labelBlockType.Location = new Point(135, 28);
+            labelBlockType.Location = new Point(6, 19);
             labelBlockType.Name = "labelBlockType";
             labelBlockType.Size = new Size(66, 15);
             labelBlockType.TabIndex = 5;
@@ -128,31 +144,31 @@
             // labelList
             // 
             labelList.AutoSize = true;
-            labelList.Location = new Point(12, 79);
+            labelList.Location = new Point(12, 154);
             labelList.Name = "labelList";
             labelList.Size = new Size(143, 15);
             labelList.TabIndex = 6;
             labelList.Text = "Blocks (Execution Order): ";
             // 
-            // textBoxBlockName
+            // textBoxBlockData
             // 
-            textBoxBlockName.Location = new Point(281, 46);
-            textBoxBlockName.Name = "textBoxBlockName";
-            textBoxBlockName.Size = new Size(100, 23);
-            textBoxBlockName.TabIndex = 7;
+            textBoxBlockData.Location = new Point(133, 37);
+            textBoxBlockData.Name = "textBoxBlockData";
+            textBoxBlockData.Size = new Size(100, 23);
+            textBoxBlockData.TabIndex = 7;
             // 
-            // labelBlockName
+            // labelBlockData
             // 
-            labelBlockName.AutoSize = true;
-            labelBlockName.Location = new Point(281, 28);
-            labelBlockName.Name = "labelBlockName";
-            labelBlockName.Size = new Size(103, 15);
-            labelBlockName.TabIndex = 8;
-            labelBlockName.Text = "Block Name/Data:";
+            labelBlockData.AutoSize = true;
+            labelBlockData.Location = new Point(133, 19);
+            labelBlockData.Name = "labelBlockData";
+            labelBlockData.Size = new Size(66, 15);
+            labelBlockData.TabIndex = 8;
+            labelBlockData.Text = "Block Data:";
             // 
             // buttonAdd
             // 
-            buttonAdd.Location = new Point(558, 46);
+            buttonAdd.Location = new Point(239, 37);
             buttonAdd.Name = "buttonAdd";
             buttonAdd.Size = new Size(75, 23);
             buttonAdd.TabIndex = 11;
@@ -160,37 +176,96 @@
             buttonAdd.UseVisualStyleBackColor = true;
             buttonAdd.Click += buttonAdd_Click;
             // 
-            // buttonRemoveLast
+            // buttonRemoveSelected
             // 
-            buttonRemoveLast.Location = new Point(639, 46);
-            buttonRemoveLast.Name = "buttonRemoveLast";
-            buttonRemoveLast.Size = new Size(149, 23);
-            buttonRemoveLast.TabIndex = 12;
-            buttonRemoveLast.Text = "Remove Last Block";
-            buttonRemoveLast.UseVisualStyleBackColor = true;
-            buttonRemoveLast.Click += buttonRemoveLast_Click;
+            buttonRemoveSelected.Location = new Point(6, 51);
+            buttonRemoveSelected.Name = "buttonRemoveSelected";
+            buttonRemoveSelected.Size = new Size(156, 23);
+            buttonRemoveSelected.TabIndex = 13;
+            buttonRemoveSelected.Text = "Remove Selected Block";
+            buttonRemoveSelected.UseVisualStyleBackColor = true;
+            buttonRemoveSelected.Click += buttonRemoveSelected_Click;
+            // 
+            // buttonMoveUp
+            // 
+            buttonMoveUp.Location = new Point(6, 80);
+            buttonMoveUp.Name = "buttonMoveUp";
+            buttonMoveUp.Size = new Size(75, 23);
+            buttonMoveUp.TabIndex = 14;
+            buttonMoveUp.Text = "Up";
+            buttonMoveUp.UseVisualStyleBackColor = true;
+            buttonMoveUp.Click += buttonMoveUp_Click;
+            // 
+            // buttonMoveDown
+            // 
+            buttonMoveDown.Location = new Point(87, 80);
+            buttonMoveDown.Name = "buttonMoveDown";
+            buttonMoveDown.Size = new Size(75, 23);
+            buttonMoveDown.TabIndex = 15;
+            buttonMoveDown.Text = "Down";
+            buttonMoveDown.UseVisualStyleBackColor = true;
+            buttonMoveDown.Click += buttonMoveDown_Click;
+            // 
+            // buttonEditSelected
+            // 
+            buttonEditSelected.Location = new Point(6, 22);
+            buttonEditSelected.Name = "buttonEditSelected";
+            buttonEditSelected.Size = new Size(156, 23);
+            buttonEditSelected.TabIndex = 16;
+            buttonEditSelected.Text = "Edit Selected Block";
+            buttonEditSelected.UseVisualStyleBackColor = true;
+            buttonEditSelected.Click += buttonEditSelected_Click;
+            // 
+            // groupBoxSelected
+            // 
+            groupBoxSelected.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            groupBoxSelected.Controls.Add(buttonEditSelected);
+            groupBoxSelected.Controls.Add(buttonRemoveSelected);
+            groupBoxSelected.Controls.Add(buttonMoveDown);
+            groupBoxSelected.Controls.Add(buttonMoveUp);
+            groupBoxSelected.Enabled = false;
+            groupBoxSelected.Location = new Point(513, 40);
+            groupBoxSelected.Name = "groupBoxSelected";
+            groupBoxSelected.Size = new Size(169, 107);
+            groupBoxSelected.TabIndex = 17;
+            groupBoxSelected.TabStop = false;
+            groupBoxSelected.Text = "Selection Controls";
+            // 
+            // groupBoxAddBlock
+            // 
+            groupBoxAddBlock.Controls.Add(labelBlockType);
+            groupBoxAddBlock.Controls.Add(comboBoxBlockType);
+            groupBoxAddBlock.Controls.Add(buttonAdd);
+            groupBoxAddBlock.Controls.Add(textBoxBlockData);
+            groupBoxAddBlock.Controls.Add(labelBlockData);
+            groupBoxAddBlock.Location = new Point(12, 76);
+            groupBoxAddBlock.Name = "groupBoxAddBlock";
+            groupBoxAddBlock.Size = new Size(322, 71);
+            groupBoxAddBlock.TabIndex = 18;
+            groupBoxAddBlock.TabStop = false;
+            groupBoxAddBlock.Text = "Add/Update Blocks";
             // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(buttonRemoveLast);
-            Controls.Add(buttonAdd);
-            Controls.Add(labelBlockName);
-            Controls.Add(textBoxBlockName);
+            ClientSize = new Size(698, 497);
+            Controls.Add(groupBoxSelected);
             Controls.Add(labelList);
-            Controls.Add(labelBlockType);
-            Controls.Add(comboBoxBlockType);
             Controls.Add(listBlocks);
             Controls.Add(labelProjectName);
             Controls.Add(textProjectName);
             Controls.Add(menuStrip);
+            Controls.Add(groupBoxAddBlock);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenuStrip = menuStrip;
             Name = "MainWindow";
             Text = "MainWindow";
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
+            groupBoxSelected.ResumeLayout(false);
+            groupBoxAddBlock.ResumeLayout(false);
+            groupBoxAddBlock.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -208,9 +283,15 @@
         private ComboBox comboBoxBlockType;
         private Label labelBlockType;
         private Label labelList;
-        private TextBox textBoxBlockName;
-        private Label labelBlockName;
+        private TextBox textBoxBlockData;
+        private Label labelBlockData;
         private Button buttonAdd;
-        private Button buttonRemoveLast;
+        private Button buttonRemoveSelected;
+        private Button buttonMoveUp;
+        private Button buttonMoveDown;
+        private Button buttonEditSelected;
+        private GroupBox groupBoxSelected;
+        private GroupBox groupBoxAddBlock;
+        private ToolStripMenuItem newStripMenuItem;
     }
 }

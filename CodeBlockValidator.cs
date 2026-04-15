@@ -314,7 +314,7 @@ namespace COMP_3951_BlockForge_TechPro
         /// <returns>true when text exists, false otherwise.</returns>
         private static bool HasText(CodeBlock block)
         {
-            return !string.IsNullOrWhiteSpace(block.BlockName);
+            return !string.IsNullOrWhiteSpace(block.BlockData);
         }
 
         /// <summary>

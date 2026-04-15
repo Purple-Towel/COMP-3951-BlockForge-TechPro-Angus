@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Windows.Forms;
 
@@ -22,6 +23,7 @@ namespace COMP_3951_BlockForge_TechPro
     {
         private int _sequenceTracker;
         private Project _currentProject;
+        private CodeBlock? _editingBlock;
         private readonly PayloadTransformer _payloadTransformer;
         private readonly ProjectFileManager _projectFileManager;
 
@@ -37,7 +39,10 @@ namespace COMP_3951_BlockForge_TechPro
 
             textProjectName.Text = _currentProject.ProjectName;
             _sequenceTracker = 0;
-            comboBoxBlockType.DataSource = Enum.GetValues(typeof(CodeBlockType));
+            comboBoxBlockType.DataSource = Enum.GetValues(typeof(CodeBlockType))
+                .Cast<CodeBlockType>()
+                .Where(type => type != CodeBlockType.Unknown)
+                .ToList();
             comboBoxBlockType.SelectedItem = CodeBlockType.Start;
 
             RefreshBlockList();
@@ -48,8 +53,36 @@ namespace COMP_3951_BlockForge_TechPro
         /// </summary>
         private void ClearBlockInput()
         {
-            textBoxBlockName.Text = string.Empty;
+            textBoxBlockData.Text = string.Empty;
             comboBoxBlockType.SelectedItem = CodeBlockType.Start;
+        }
+
+        /// <summary>
+        /// Helper function to manage Selection Controls based on Selection state.
+        /// </summary>
+        private void UpdateSelectionControls()
+        {
+            bool isItemSelected = listBlocks.SelectedIndex != -1;
+            bool isEditingMode = _editingBlock != null;
+
+            groupBoxSelected.Enabled = isItemSelected || isEditingMode;
+
+            int index = listBlocks.SelectedIndex;
+            int bottom = listBlocks.Items.Count - 1;
+
+            buttonEditSelected.Enabled = isItemSelected || isEditingMode;
+            buttonRemoveSelected.Enabled = isItemSelected && !isEditingMode;
+            buttonMoveUp.Enabled = isItemSelected && !isEditingMode && index >= 1;
+            buttonMoveDown.Enabled = isItemSelected && !isEditingMode && index < bottom;
+        }
+
+        /// <summary>
+        /// Helper function that will release selected block.
+        /// </summary>
+        private void ReleaseSelection()
+        {
+            listBlocks.SelectedIndex = -1;
+            UpdateSelectionControls();
         }
 
         /// <summary>
@@ -66,46 +99,57 @@ namespace COMP_3951_BlockForge_TechPro
         }
 
         /// <summary>
-        /// Handler for the add block button.
+        /// Handler for the add block button. Can also handle editing.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            CodeBlock newBlock = new CodeBlock
+            if (_editingBlock == null)
+            {
+                CodeBlock newBlock = new CodeBlock
                 (
                     0,
                     0,
                     Guid.NewGuid().ToString(),
                     _sequenceTracker,
-                    (CodeBlockType)comboBoxBlockType.SelectedItem,
-                    textBoxBlockName.Text
+                    (CodeBlockType) comboBoxBlockType.SelectedItem,
+                    textBoxBlockData.Text
                 );
 
-            _currentProject.CodeBlocks.Add(newBlock);
-            RefreshBlockList();
-            ClearBlockInput();
-            _sequenceTracker++;
+                _currentProject.CodeBlocks.Add(newBlock);
+                RefreshBlockList();
+                ReleaseSelection();
+                ClearBlockInput();
+                _sequenceTracker++;
+                textBoxBlockData.Focus();
+            }
+            else
+            {
+                _editingBlock.UpdateBlockMetadata((CodeBlockType) comboBoxBlockType.SelectedItem, textBoxBlockData.Text);
+                _editingBlock = null;
+                buttonAdd.Text = "Add Block";
+                buttonEditSelected.Text = "Edit Selected Block";
+                RefreshBlockList();
+                ReleaseSelection();
+                ClearBlockInput();
+                textBoxBlockData.Focus();
+                listBlocks.Enabled = true;
+            }
         }
 
         /// <summary>
-        /// Handler for the remove last block button.
+        /// Handler for the new menu option.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void buttonRemoveLast_Click(object sender, EventArgs e)
+        private void newStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_currentProject.CodeBlocks.Count == 0)
-            {
-                MessageBox.Show("Block queue empty.");
-                return;
-            }
-
-            CodeBlock lastBlock = _currentProject.CodeBlocks.OrderBy(b => b.Sequence).Last();
-
-            _currentProject.CodeBlocks.Remove(lastBlock);
-            _sequenceTracker--;
+            _currentProject = new Project("New Project", new List<CodeBlock>());
+            _sequenceTracker = 0;
+            textProjectName.Text = "New Project";
             RefreshBlockList();
+            ReleaseSelection();
         }
 
         /// <summary>
@@ -138,7 +182,7 @@ namespace COMP_3951_BlockForge_TechPro
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Save failed: {ex.Message}");
+                    MessageBox.Show($"Save failed:\n{ex.Message}");
                 }
             }
         }
@@ -153,7 +197,7 @@ namespace COMP_3951_BlockForge_TechPro
             OpenFileDialog open = new OpenFileDialog();
             open.Filter = "BlockForge Project (*.bfg)|*.bfg|All Files (*.*)|*.*";
 
-            if (open.ShowDialog() == DialogResult.OK )
+            if (open.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
@@ -162,11 +206,12 @@ namespace COMP_3951_BlockForge_TechPro
 
                     _sequenceTracker = _currentProject.CodeBlocks.Any() ? _currentProject.CodeBlocks.Max(b => b.Sequence) + 1 : 0;
                     RefreshBlockList();
+                    ReleaseSelection();
                     MessageBox.Show($"Project {_currentProject.ProjectName} opened successfully");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Open failed: {ex.Message}");
+                    MessageBox.Show($"Open failed:\n{ex.Message}");
                 }
             }
         }
@@ -182,17 +227,185 @@ namespace COMP_3951_BlockForge_TechPro
             save.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
             save.FileName = $"{textProjectName.Text.Trim()}_Output.txt";
 
-            if (save.ShowDialog() == DialogResult.OK )
+            if (save.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
                     _projectFileManager.OutputCode(_currentProject, save.FileName);
                     MessageBox.Show("Pseudocode generated successfully.");
-                } 
+                }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Code generation failed: {ex.Message}");
+                    MessageBox.Show($"Code generation failed:\n{ex.Message}");
                 }
+            }
+        }
+
+        /// <summary>
+        /// Handler for removing the current selected block.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonRemoveSelected_Click(object sender, EventArgs e)
+        {
+            int index = listBlocks.SelectedIndex;
+
+            if (index < 0)
+            {
+                MessageBox.Show("No current selection.");
+                return;
+            }
+
+            List<CodeBlock> ordered = _currentProject.CodeBlocks
+                .OrderBy(b => b.Sequence)
+                .ToList();
+
+            CodeBlock selected = ordered[index];
+
+            _currentProject.CodeBlocks.Remove(selected);
+
+            List<CodeBlock> reordered = _currentProject.CodeBlocks
+                .OrderBy(b => b.Sequence)
+                .ToList();
+
+            for (int i = 0; i < reordered.Count; i++)
+            {
+                reordered[i].Sequence = i;
+            }
+
+            _sequenceTracker = _currentProject.CodeBlocks.Count;
+
+            RefreshBlockList();
+            ReleaseSelection();
+        }
+
+        /// <summary>
+        /// Handler for moving the selected block upward.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonMoveUp_Click(object sender, EventArgs e)
+        {
+            int index = listBlocks.SelectedIndex;
+
+            if (index < 0)
+            {
+                MessageBox.Show("No current selection.");
+                return;
+            }
+
+            if (index == 0)
+            {
+                SystemSounds.Asterisk.Play();
+                return;
+            }
+
+            List<CodeBlock> ordered = _currentProject.CodeBlocks
+                .OrderBy(b => b.Sequence)
+                .ToList();
+
+            CodeBlock selected = ordered[index];
+            CodeBlock above = ordered[index - 1];
+
+            int temp = selected.Sequence;
+            selected.Sequence = above.Sequence;
+            above.Sequence = temp;
+
+            RefreshBlockList();
+            listBlocks.SelectedIndex = index - 1;
+        }
+
+        /// <summary>
+        /// Handler for moving the selected block downward.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonMoveDown_Click(object sender, EventArgs e)
+        {
+            int index = listBlocks.SelectedIndex;
+            int bottom = listBlocks.Items.Count - 1;
+
+            if (index < 0)
+            {
+                MessageBox.Show("No current selection.");
+                return;
+            }
+
+            if (index == bottom)
+            {
+                SystemSounds.Asterisk.Play();
+                return;
+            }
+
+            List<CodeBlock> ordered = _currentProject.CodeBlocks
+                .OrderBy(b => b.Sequence)
+                .ToList();
+
+            CodeBlock selected = ordered[index];
+            CodeBlock below = ordered[index + 1];
+
+            int temp = selected.Sequence;
+            selected.Sequence = below.Sequence;
+            below.Sequence = temp;
+
+            RefreshBlockList();
+            listBlocks.SelectedIndex = index + 1;
+        }
+
+        /// <summary>
+        /// Handler for updating the Selection Control state when selected block state changes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listBlocks_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateSelectionControls();
+        }
+
+        /// <summary>
+        /// Handler for editing the selected block.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonEditSelected_Click(object sender, EventArgs e)
+        {
+            if (_editingBlock == null)
+            {
+                int index = listBlocks.SelectedIndex;
+
+                if (index < 0)
+                {
+                    MessageBox.Show("No current selection.");
+                    return;
+                }
+
+                List<CodeBlock> ordered = _currentProject.CodeBlocks
+                    .OrderBy(b => b.Sequence)
+                    .ToList();
+
+                CodeBlock selected = ordered[index];
+
+                _editingBlock = selected;
+                comboBoxBlockType.SelectedItem = selected.BlockType;
+                textBoxBlockData.Text = selected.BlockData;
+
+                buttonAdd.Text = "Update Block";
+                buttonEditSelected.Text = "Cancel Editing Mode";
+                textBoxBlockData.Focus();
+                UpdateSelectionControls();
+                listBlocks.Enabled = false;
+            }
+            else
+            {
+                _editingBlock = null;
+
+                buttonAdd.Text = "Add Block";
+                buttonEditSelected.Text = "Edit Selected Block";
+
+                textBoxBlockData.Focus();
+                ClearBlockInput();
+                ReleaseSelection();
+                listBlocks.Enabled = true;
             }
         }
     }
