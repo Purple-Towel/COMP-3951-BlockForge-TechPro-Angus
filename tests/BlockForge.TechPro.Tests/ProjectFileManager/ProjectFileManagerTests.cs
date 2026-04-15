@@ -3,7 +3,7 @@ using COMP_3951_BlockForge_TechPro;
 /// <summary>
 /// BlockForge ProjectFileManagerTests 
 /// Author: Angus Grewal
-/// Date: Mar 25 2026
+/// Date: Apr 14 2026
 /// Source: Self-written, with AI coaching. All code submitted is human written, based on ChatGPT guidance.
 /// </summary>
 namespace BlockForge.TechPro.Tests.ProjectFileManagerTests;
@@ -19,9 +19,9 @@ public class ProjectFileManagerTests
         ProjectFileManager filemanager = new ProjectFileManager(transformer);
 
         List<CodeBlock> blocks = new List<CodeBlock>();
-        blocks.Add(new CodeBlock(150, 300, "UID-1"));
-        blocks.Add(new CodeBlock(300, 600, "UID-2"));
-        blocks.Add(new CodeBlock(450, 900, "UID-3"));
+        blocks.Add(new CodeBlock(150, 300, "UID-1", 0, CodeBlockType.Start));
+        blocks.Add(new CodeBlock(300, 600, "UID-2", 1, CodeBlockType.Do, "i++"));
+        blocks.Add(new CodeBlock(450, 900, "UID-3", 2, CodeBlockType.End));
 
         Project project = new Project("test_project", blocks);
 
