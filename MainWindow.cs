@@ -23,6 +23,7 @@ namespace COMP_3951_BlockForge_TechPro
     {
         private int _sequenceTracker;
         private Project _currentProject;
+        private CodeBlock? _editingBlock;
         private readonly PayloadTransformer _payloadTransformer;
         private readonly ProjectFileManager _projectFileManager;
 
@@ -95,28 +96,42 @@ namespace COMP_3951_BlockForge_TechPro
         }
 
         /// <summary>
-        /// Handler for the add block button.
+        /// Handler for the add block button. Can also handle editing.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            CodeBlock newBlock = new CodeBlock
+            if (_editingBlock == null)
+            {
+                CodeBlock newBlock = new CodeBlock
                 (
                     0,
                     0,
                     Guid.NewGuid().ToString(),
                     _sequenceTracker,
-                    (CodeBlockType)comboBoxBlockType.SelectedItem,
+                    (CodeBlockType) comboBoxBlockType.SelectedItem,
                     textBoxBlockData.Text
                 );
 
-            _currentProject.CodeBlocks.Add(newBlock);
-            RefreshBlockList();
-            ReleaseSelection();
-            ClearBlockInput();
-            _sequenceTracker++;
-            textBoxBlockData.Focus();
+                _currentProject.CodeBlocks.Add(newBlock);
+                RefreshBlockList();
+                ReleaseSelection();
+                ClearBlockInput();
+                _sequenceTracker++;
+                textBoxBlockData.Focus();
+            }
+            else
+            {
+                _editingBlock.UpdateBlockMetadata((CodeBlockType) comboBoxBlockType.SelectedItem, textBoxBlockData.Text);
+                _editingBlock = null;
+                buttonAdd.Text = "Add Block";
+                buttonEditSelected.Text = "Edit Selected Block";
+                RefreshBlockList();
+                ReleaseSelection();
+                ClearBlockInput();
+                textBoxBlockData.Focus();
+            }
         }
 
         /// <summary>
@@ -343,5 +358,50 @@ namespace COMP_3951_BlockForge_TechPro
             UpdateSelectionControls();
         }
 
+        /// <summary>
+        /// Handler for editing the selected block.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonEditSelected_Click(object sender, EventArgs e)
+        {
+            if (_editingBlock == null)
+            {
+                int index = listBlocks.SelectedIndex;
+
+                if (index < 0)
+                {
+                    MessageBox.Show("No current selection.");
+                    return;
+                }
+
+                List<CodeBlock> ordered = _currentProject.CodeBlocks
+                    .OrderBy(b => b.Sequence)
+                    .ToList();
+
+                CodeBlock selected = ordered[index];
+
+                _editingBlock = selected;
+                comboBoxBlockType.SelectedItem = selected.BlockType;
+                textBoxBlockData.Text = selected.BlockData;
+
+                buttonAdd.Text = "Update Block";
+                buttonEditSelected.Text = "Cancel Editing Mode";
+
+                textBoxBlockData.Focus();
+                ReleaseSelection();
+            }
+            else
+            {
+                _editingBlock = null;
+
+                buttonAdd.Text = "Add Block";
+                buttonEditSelected.Text = "Edit Selected Block";
+
+                textBoxBlockData.Focus();
+                ClearBlockInput();
+                ReleaseSelection();
+            }
+        }
     }
 }

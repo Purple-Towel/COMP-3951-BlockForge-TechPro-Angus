@@ -73,28 +73,28 @@
             // newStripMenuItem
             // 
             newStripMenuItem.Name = "newStripMenuItem";
-            newStripMenuItem.Size = new Size(180, 22);
+            newStripMenuItem.Size = new Size(152, 22);
             newStripMenuItem.Text = "New";
             newStripMenuItem.Click += newStripMenuItem_Click;
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Size = new Size(152, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Size = new Size(152, 22);
             openToolStripMenuItem.Text = "Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
             // generateCodeToolStripMenuItem
             // 
             generateCodeToolStripMenuItem.Name = "generateCodeToolStripMenuItem";
-            generateCodeToolStripMenuItem.Size = new Size(180, 22);
+            generateCodeToolStripMenuItem.Size = new Size(152, 22);
             generateCodeToolStripMenuItem.Text = "Generate Code";
             generateCodeToolStripMenuItem.Click += generateCodeToolStripMenuItem_Click;
             // 
@@ -214,6 +214,7 @@
             buttonEditSelected.TabIndex = 16;
             buttonEditSelected.Text = "Edit Selected Block";
             buttonEditSelected.UseVisualStyleBackColor = true;
+            buttonEditSelected.Click += buttonEditSelected_Click;
             // 
             // groupBoxSelected
             // 
@@ -242,7 +243,7 @@
             groupBoxAddBlock.Size = new Size(322, 71);
             groupBoxAddBlock.TabIndex = 18;
             groupBoxAddBlock.TabStop = false;
-            groupBoxAddBlock.Text = "Add Blocks";
+            groupBoxAddBlock.Text = "Add/Update Blocks";
             // 
             // MainWindow
             // 
