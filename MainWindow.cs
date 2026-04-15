@@ -52,7 +52,7 @@ namespace COMP_3951_BlockForge_TechPro
         /// </summary>
         private void ClearBlockInput()
         {
-            textBoxBlockName.Text = string.Empty;
+            textBoxBlockData.Text = string.Empty;
             comboBoxBlockType.SelectedItem = CodeBlockType.Start;
         }
 
@@ -83,7 +83,7 @@ namespace COMP_3951_BlockForge_TechPro
                     Guid.NewGuid().ToString(),
                     _sequenceTracker,
                     (CodeBlockType)comboBoxBlockType.SelectedItem,
-                    textBoxBlockName.Text
+                    textBoxBlockData.Text
                 );
 
             _currentProject.CodeBlocks.Add(newBlock);

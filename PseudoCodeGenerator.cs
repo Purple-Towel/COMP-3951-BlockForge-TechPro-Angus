@@ -32,23 +32,23 @@ namespace COMP_3951_BlockForge_TechPro
                     return new List<string> { "END" };
 
                 case CodeBlockType.Do:
-                    return new List<string> { $"DO \"{block.BlockName ?? "[EMPTY]"}\"" };
+                    return new List<string> { $"DO \"{block.BlockData ?? "[EMPTY]"}\"" };
 
                 case CodeBlockType.If:
-                    return new List<string> { $"IF {block.BlockName ?? "[NO CONDITION]"}" };
+                    return new List<string> { $"IF {block.BlockData ?? "[NO CONDITION]"}" };
 
                 case CodeBlockType.Then:
                     return new List<string> 
                     { 
                         "    THEN", 
-                        $"        {block.BlockName ?? "[NO THEN BRANCH]"}" 
+                        $"        {block.BlockData ?? "[NO THEN BRANCH]"}" 
                     };
 
                 case CodeBlockType.Else:
                     return new List<string> 
                     { 
                         "    ELSE",
-                        $"        {block.BlockName ?? "[NO ELSE BRANCH]"}" 
+                        $"        {block.BlockData ?? "[NO ELSE BRANCH]"}" 
                     };
 
                 default:

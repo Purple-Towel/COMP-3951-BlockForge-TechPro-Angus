@@ -39,8 +39,8 @@
             comboBoxBlockType = new ComboBox();
             labelBlockType = new Label();
             labelList = new Label();
-            textBoxBlockName = new TextBox();
-            labelBlockName = new Label();
+            textBoxBlockData = new TextBox();
+            labelBlockData = new Label();
             buttonAdd = new Button();
             buttonRemoveLast = new Button();
             buttonRemoveSelected = new Button();
@@ -142,21 +142,21 @@
             labelList.TabIndex = 6;
             labelList.Text = "Blocks (Execution Order): ";
             // 
-            // textBoxBlockName
+            // textBoxBlockData
             // 
-            textBoxBlockName.Location = new Point(133, 37);
-            textBoxBlockName.Name = "textBoxBlockName";
-            textBoxBlockName.Size = new Size(100, 23);
-            textBoxBlockName.TabIndex = 7;
+            textBoxBlockData.Location = new Point(133, 37);
+            textBoxBlockData.Name = "textBoxBlockData";
+            textBoxBlockData.Size = new Size(100, 23);
+            textBoxBlockData.TabIndex = 7;
             // 
-            // labelBlockName
+            // labelBlockData
             // 
-            labelBlockName.AutoSize = true;
-            labelBlockName.Location = new Point(133, 19);
-            labelBlockName.Name = "labelBlockName";
-            labelBlockName.Size = new Size(103, 15);
-            labelBlockName.TabIndex = 8;
-            labelBlockName.Text = "Block Name/Data:";
+            labelBlockData.AutoSize = true;
+            labelBlockData.Location = new Point(133, 19);
+            labelBlockData.Name = "labelBlockData";
+            labelBlockData.Size = new Size(66, 15);
+            labelBlockData.TabIndex = 8;
+            labelBlockData.Text = "Block Data:";
             // 
             // buttonAdd
             // 
@@ -237,8 +237,8 @@
             groupBoxAddBlock.Controls.Add(buttonRemoveLast);
             groupBoxAddBlock.Controls.Add(comboBoxBlockType);
             groupBoxAddBlock.Controls.Add(buttonAdd);
-            groupBoxAddBlock.Controls.Add(textBoxBlockName);
-            groupBoxAddBlock.Controls.Add(labelBlockName);
+            groupBoxAddBlock.Controls.Add(textBoxBlockData);
+            groupBoxAddBlock.Controls.Add(labelBlockData);
             groupBoxAddBlock.Location = new Point(12, 76);
             groupBoxAddBlock.Name = "groupBoxAddBlock";
             groupBoxAddBlock.Size = new Size(479, 71);
@@ -284,8 +284,8 @@
         private ComboBox comboBoxBlockType;
         private Label labelBlockType;
         private Label labelList;
-        private TextBox textBoxBlockName;
-        private Label labelBlockName;
+        private TextBox textBoxBlockData;
+        private Label labelBlockData;
         private Button buttonAdd;
         private Button buttonRemoveLast;
         private Button buttonRemoveSelected;

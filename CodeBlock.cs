@@ -37,7 +37,7 @@ namespace COMP_3951_BlockForge_TechPro
         public int Sequence { get; set; }
 
         public CodeBlockType BlockType { get; set; }
-        public string? BlockName { get; set; }
+        public string? BlockData { get; set; }
 
         /// <summary>
         /// Constructor for a CodeBlock.
@@ -52,14 +52,14 @@ namespace COMP_3951_BlockForge_TechPro
             String uid,
             int sequence = 0,
             CodeBlockType blockType = CodeBlockType.Unknown,
-            string? blockName = null)
+            string? blockData = null)
         {
             this.PosX = posX;
             this.PosY = posY;
             this.Uid = uid;
             this.Sequence = sequence;
             this.BlockType = blockType;
-            this.BlockName = blockName;
+            this.BlockData = blockData;
         }
 
         /// <summary>
@@ -78,23 +78,21 @@ namespace COMP_3951_BlockForge_TechPro
         /// Updates the metadata associated with the block.
         /// </summary>
         /// <param name="blockType">The block type to store.</param>
-        /// <param name="blockName">The display name of the block.</param>
-        public void UpdateBlockMetadata(CodeBlockType blockType, string? blockName = null)
+        /// <param name="blockData">The display name of the block.</param>
+        public void UpdateBlockMetadata(CodeBlockType blockType, string? blockData = null)
         {
             this.BlockType = blockType;
-            this.BlockName = blockName;
+            this.BlockData = blockData;
         }
 
         public override string ToString()
         {
-            string output = $"{Sequence} | {BlockType}";
-
-            if (!string.IsNullOrWhiteSpace(BlockName))
+            if (!string.IsNullOrWhiteSpace(BlockData))
             {
-                output += $" | {BlockName}";
+                return $"[{Sequence}] {BlockType}: {BlockData}";
             }
 
-            return output;
+            return $"[{Sequence}] {BlockType}";
         }
     }
 }
