@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Windows.Forms;
 
@@ -202,7 +203,7 @@ namespace COMP_3951_BlockForge_TechPro
         private void buttonRemoveSelected_Click(object sender, EventArgs e)
         {
             int index = listBlocks.SelectedIndex;
-            
+
             if (index < 0)
             {
                 MessageBox.Show("No current selection.");
@@ -221,7 +222,7 @@ namespace COMP_3951_BlockForge_TechPro
                 .OrderBy(b => b.Sequence)
                 .ToList();
 
-            for (int i = 0; i< reordered.Count; i++)
+            for (int i = 0; i < reordered.Count; i++)
             {
                 reordered[i].Sequence = i;
             }
@@ -229,6 +230,69 @@ namespace COMP_3951_BlockForge_TechPro
             _sequenceTracker = _currentProject.CodeBlocks.Count;
 
             RefreshBlockList();
+        }
+
+        private void buttonMoveUp_Click(object sender, EventArgs e)
+        {
+            int index = listBlocks.SelectedIndex;
+
+            if (index < 0)
+            {
+                MessageBox.Show("No current selection.");
+                return;
+            }
+
+            if (index == 0)
+            {
+                System.Media.SystemSounds.Asterisk.Play();
+                return;
+            }
+
+            List<CodeBlock> ordered = _currentProject.CodeBlocks
+                .OrderBy(b => b.Sequence)
+                .ToList();
+
+            CodeBlock selected = ordered[index];
+            CodeBlock above = ordered[index - 1];
+
+            int temp = selected.Sequence;
+            selected.Sequence = above.Sequence;
+            above.Sequence = temp;
+
+            RefreshBlockList();
+            listBlocks.SelectedIndex = index - 1;
+        }
+
+        private void buttonMoveDown_Click(object sender, EventArgs e)
+        {
+            int index = listBlocks.SelectedIndex;
+            int bottom = listBlocks.Items.Count - 1;
+
+            if (index < 0)
+            {
+                MessageBox.Show("No current selection.");
+                return;
+            }
+
+            if (index == bottom)
+            {
+                System.Media.SystemSounds.Asterisk.Play();
+                return;
+            }
+
+            List<CodeBlock> ordered = _currentProject.CodeBlocks
+                .OrderBy(b => b.Sequence)
+                .ToList();
+
+            CodeBlock selected = ordered[index];
+            CodeBlock below = ordered[index + 1];
+
+            int temp = selected.Sequence;
+            selected.Sequence = below.Sequence;
+            below.Sequence = temp;
+
+            RefreshBlockList();
+            listBlocks.SelectedIndex = index + 1;
         }
     }
 }
