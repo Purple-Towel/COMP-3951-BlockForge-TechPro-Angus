@@ -274,7 +274,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = menuStrip;
             Name = "MainWindow";
-            Text = "MainWindow";
+            Text = "Block Forge";
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
             groupBoxSelected.ResumeLayout(false);
